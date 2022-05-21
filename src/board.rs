@@ -1,27 +1,30 @@
 pub type Line = [TetrominoType; 10];
 pub type Board = [Line; 24];
 
+const fn board_width () -> usize { 10 }
+const fn board_height () -> usize { 24 }
+
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TetrominoType
 {
     Empty, I, L, T, Z, S, J, O
 }
 
-fn empty_line () -> Line { [TetrominoType::Empty; 10] }
-fn empty_board () -> Board { [empty_line(); 24] }
+fn empty_line () -> Line { [TetrominoType::Empty; board_width()] }
+fn empty_board () -> Board { [empty_line(); board_height()] }
 
 #[test]
 fn board_size ()
 {
     let board: Board = empty_board ();
-    assert_eq!(board.len(), 24);
+    assert_eq!(board.len(), board_height());
 }
 
 #[test]
 fn line_size ()
 {
     let line: Line = empty_line ();
-    assert_eq!(line.len(), 10);
+    assert_eq!(line.len(), board_width());
 }
 
 #[test]
