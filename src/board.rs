@@ -31,3 +31,9 @@ fn line_access() {
     assert_eq! (line [0], TetrominoType::J);
 }
 
+#[test]
+fn board_access() {
+    let mut board: Board = empty_board ();
+    board [3][2] = TetrominoType::I;
+    assert_eq! (board [3][2], TetrominoType::I);
+}
