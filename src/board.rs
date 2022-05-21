@@ -1,7 +1,13 @@
-pub type Line = [i32; 10];
+pub type Line = [TetrominoType; 10];
 pub type Board = [Line; 24];
 
-fn empty_line () -> Line { [0; 10] }
+#[derive(PartialEq, Debug, Copy, Clone)]
+pub enum TetrominoType
+{
+    Empty, I, L, T, Z, S, J, O
+}
+
+fn empty_line () -> Line { [TetrominoType::Empty; 10] }
 fn empty_board () -> Board { [empty_line(); 24] }
 
 #[test]
@@ -20,8 +26,8 @@ fn line_size ()
 
 #[test]
 fn line_access() {
-    let mut line: Line = [0;10];
-    line [0] = 1;
-    assert_eq! (line [0], 1);
+    let mut line: Line = empty_line ();
+    line [0] = TetrominoType::J;
+    assert_eq! (line [0], TetrominoType::J);
 }
 
