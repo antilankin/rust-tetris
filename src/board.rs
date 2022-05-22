@@ -11,7 +11,7 @@ pub struct Board {
 }    
 
 impl Board {
-    fn len (&self) -> usize { self.lines.len () }
+    fn height (&self) -> usize { self.lines.len () }
     
     fn safe_get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
 
@@ -56,7 +56,7 @@ fn empty_board () -> Board { Board { lines: [empty_line(); board_height()] } }
 fn board_size ()
 {
     let board: Board = empty_board ();
-    assert_eq!(board.len(), board_height());
+    assert_eq!(board.height(), board_height());
 }
 
 #[test]
