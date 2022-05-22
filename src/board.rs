@@ -9,7 +9,7 @@ const fn board_height () -> usize { 24 }
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TetrominoType
 {
-    Empty, I, L, T, Z, S, J, O
+    Empty, Blocked, I, L, T, Z, S, J, O
 }
 
 fn empty_line () -> Line { [TetrominoType::Empty; board_width()] }
@@ -55,11 +55,24 @@ fn board_position (pos: Position) -> Option <BoardPosition>
     else { Some ([pos[0] as usize, pos[1] as usize]) }
 }
 
-fn is_empty (board: &Board, position: Position) -> bool
+fn content (board: &Board, position: Position) -> TetrominoType
 {
     match board_position (position) {
-        None => false,
-        Some (board_position) => board [board_position[1]] [board_position[0]] == TetrominoType::Empty
+        None => TetrominoType::Blocked,
+        Some (board_position) => board [board_position[1]] [board_position[0]]
+    }
+}
+
+fn is_empty (board: &Board, position: Position) -> bool
+{
+    content (board, position) == TetrominoType::Empty
+}
+
+fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
+{
+    match board_position (position) {
+        Some (safe_position) => board [safe_position [1]] [safe_position [0]] = tetronimo,
+        None => {}
     }
 }
 
@@ -78,6 +91,6 @@ fn test_is_empty() {
     assert! (is_empty (&board, [0, board_height() as i32 - 1]));
 
     let mut board1 = empty_board();
-    board1[4][1] = TetrominoType::O;
-    assert!(!is_empty(&board1, [1, 4]));
+    set (&mut board1, position, TetrominoType::O);
+    assert!(!is_empty(&board1, position));
 }
