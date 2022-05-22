@@ -1,10 +1,21 @@
-pub type Line = [TetrominoType; 10];
-pub type Board = [Line; 24];
+const fn board_width () -> usize { 10 }
+const fn board_height () -> usize { 24 }
+
+pub type Line = [TetrominoType; board_width ()];
+
+pub struct Board {
+    lines: [Line; board_height ()],
+}
+
+impl Board {
+    fn len (&self) -> usize { self.lines.len () }
+    fn get (&self, line: usize, index: usize) -> TetrominoType { self.lines [line][index] }
+    fn set (&mut self, line: usize, index: usize, tetronimo: TetrominoType) { self.lines [line][index] = tetronimo; }
+}
+
 pub type Position = [i32; 2];
 pub type BoardPosition = [usize; 2];
 
-const fn board_width () -> usize { 10 }
-const fn board_height () -> usize { 24 }
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TetrominoType
@@ -13,7 +24,7 @@ pub enum TetrominoType
 }
 
 fn empty_line () -> Line { [TetrominoType::Empty; board_width()] }
-fn empty_board () -> Board { [empty_line(); board_height()] }
+fn empty_board () -> Board { Board { lines: [empty_line(); board_height()] } }
 
 #[test]
 fn board_size ()
@@ -39,8 +50,8 @@ fn line_access() {
 #[test]
 fn board_access() {
     let mut board: Board = empty_board ();
-    board [3][2] = TetrominoType::I;
-    assert_eq! (board [3][2], TetrominoType::I);
+    board.set (3, 2, TetrominoType::I);
+    assert_eq! (board.get (3, 2), TetrominoType::I);
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -59,7 +70,7 @@ fn content (board: &Board, position: Position) -> TetrominoType
 {
     match board_position (position) {
         None => TetrominoType::Blocked,
-        Some (board_position) => board [board_position[1]] [board_position[0]]
+        Some (board_position) => board.get (board_position[1], board_position[0])
     }
 }
 
@@ -71,7 +82,7 @@ fn is_empty (board: &Board, position: Position) -> bool
 fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
 {
     match board_position (position) {
-        Some (safe_position) => board [safe_position [1]] [safe_position [0]] = tetronimo,
+        Some (safe_position) => board.set (safe_position [1], safe_position [0], tetronimo),
         None => {}
     }
 }
