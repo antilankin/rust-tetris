@@ -23,7 +23,7 @@ impl Board {
         }
     }
 
-    fn is_empty (&self, pos: Position) -> bool { self.get (pos) == BoardContent::Empty }
+    fn is_free (&self, pos: Position) -> bool { self.get (pos) == BoardContent::Empty }
     
     fn set (&mut self, pos: Position, tetronimo: TetrominoType) -> bool {
         match board_position (pos) {
@@ -86,17 +86,17 @@ fn board_position (pos: Position) -> Option <BoardPosition>
 fn test_is_empty() {
     let board: Board = empty_board ();
     let position = [3,5];
-    assert! (board.is_empty (position));
+    assert! (board.is_free (position));
     
-    assert! (!board.is_empty ([-1, 0]));
-    assert! (!board.is_empty ([0, -1]));
-    assert! (!board.is_empty ([board_width() as i32, 0]));
-    assert! (!board.is_empty ([0, board_height() as i32]));
+    assert! (!board.is_free ([-1, 0]));
+    assert! (!board.is_free ([0, -1]));
+    assert! (!board.is_free ([board_width() as i32, 0]));
+    assert! (!board.is_free ([0, board_height() as i32]));
 
-    assert! (board.is_empty ([board_width() as i32 - 1, 0]));
-    assert! (board.is_empty ([0, board_height() as i32 - 1]));
+    assert! (board.is_free ([board_width() as i32 - 1, 0]));
+    assert! (board.is_free ([0, board_height() as i32 - 1]));
 
     let mut board1 = empty_board();
     board1.set (position, TetrominoType::O);
-    assert!(!board1.is_empty(position));
+    assert!(!board1.is_free(position));
 }
