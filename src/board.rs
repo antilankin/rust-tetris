@@ -66,7 +66,8 @@ fn board_access() {
     let mut board: Board = empty_board ();
     let position = [2,3];
     let tetromino = TetrominoType::I;
-    board.set (position, tetromino);
+    assert! (board.set (position, tetromino));
+    assert! (!board.set ([-1,0], tetromino));
     assert_eq! (board.get (position), BoardContent::Tetromino(tetromino));
 }
 
