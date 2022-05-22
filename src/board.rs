@@ -42,16 +42,19 @@ fn board_access() {
     assert_eq! (board [3][2], TetrominoType::I);
 }
 
+fn check_array_bounds (index: i32, max: usize) -> bool
+{
+    if index < 0 { false } else { (index as usize) < max }
+}
+
 fn is_empty (board: &Board, position: Position) -> bool
 {
-    if position[0] < 0 { false }
-    else if position[1] < 0 { false }
+    if !check_array_bounds (position[0], board_width()) { false }
+    else if !check_array_bounds (position[1], board_height()) { false }
     else {
         let line_index = position[1] as usize;
         let line_pos = position[0] as usize;
-        if line_index >= board_height () { false }
-        else if line_pos >= board_width () { false }
-        else { board [line_index] [line_pos] == TetrominoType::Empty }
+        board [line_index] [line_pos] == TetrominoType::Empty
     }
 }
 
