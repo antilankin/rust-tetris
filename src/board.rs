@@ -65,8 +65,9 @@ fn board_size ()
 fn board_access() {
     let mut board: Board = empty_board ();
     let position = [2,3];
-    board.set (position, TetrominoType::I);
-    assert_eq! (board.get (position), BoardContent::Tetromino(TetrominoType::I));
+    let tetromino = TetrominoType::I;
+    board.set (position, tetromino);
+    assert_eq! (board.get (position), BoardContent::Tetromino(tetromino));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
