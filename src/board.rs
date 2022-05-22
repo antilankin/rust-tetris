@@ -1,29 +1,40 @@
 const fn board_width () -> usize { 10 }
 const fn board_height () -> usize { 24 }
 
-pub type Line = [TetrominoType; board_width ()];
-
-pub struct Board {
-    lines: [Line; board_height ()],
-}
-
-impl Board {
-    fn len (&self) -> usize { self.lines.len () }
-    fn get (&self, line: usize, index: usize) -> TetrominoType { self.lines [line][index] }
-    fn set (&mut self, line: usize, index: usize, tetronimo: TetrominoType) { self.lines [line][index] = tetronimo; }
-}
-
 pub type Position = [i32; 2];
 pub type BoardPosition = [usize; 2];
 
+pub type Line = [BoardContent; board_width ()];
+
+pub struct Board {
+    lines: [Line; board_height ()],
+}    
+
+impl Board {
+    fn len (&self) -> usize { self.lines.len () }
+    
+    fn get (&self, line: usize, index: usize) -> BoardContent { self.lines [line][index] }
+    
+    fn set (&mut self, line: usize, index: usize, tetronimo: TetrominoType) {
+         self.lines [line][index] = BoardContent::Tetromino(tetronimo);
+    }
+}    
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TetrominoType
 {
-    Empty, Blocked, I, L, T, Z, S, J, O
+    I, L, T, Z, S, J, O
 }
 
-fn empty_line () -> Line { [TetrominoType::Empty; board_width()] }
+#[derive(PartialEq, Debug, Copy, Clone)]
+pub enum BoardContent
+{
+    Empty,
+    Blocked,
+    Tetromino(TetrominoType),
+}
+
+fn empty_line () -> Line { [BoardContent::Empty; board_width()] }
 fn empty_board () -> Board { Board { lines: [empty_line(); board_height()] } }
 
 #[test]
@@ -43,15 +54,15 @@ fn line_size ()
 #[test]
 fn line_access() {
     let mut line: Line = empty_line ();
-    line [0] = TetrominoType::J;
-    assert_eq! (line [0], TetrominoType::J);
+    line [0] = BoardContent::Tetromino(TetrominoType::J);
+    assert_eq! (line [0], BoardContent::Tetromino(TetrominoType::J));
 }
 
 #[test]
 fn board_access() {
     let mut board: Board = empty_board ();
     board.set (3, 2, TetrominoType::I);
-    assert_eq! (board.get (3, 2), TetrominoType::I);
+    assert_eq! (board.get (3, 2), BoardContent::Tetromino(TetrominoType::I));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -66,17 +77,17 @@ fn board_position (pos: Position) -> Option <BoardPosition>
     else { Some ([pos[0] as usize, pos[1] as usize]) }
 }
 
-fn content (board: &Board, position: Position) -> TetrominoType
+fn content (board: &Board, position: Position) -> BoardContent
 {
     match board_position (position) {
-        None => TetrominoType::Blocked,
+        None => BoardContent::Blocked,
         Some (board_position) => board.get (board_position[1], board_position[0])
     }
 }
 
 fn is_empty (board: &Board, position: Position) -> bool
 {
-    content (board, position) == TetrominoType::Empty
+    content (board, position) == BoardContent::Empty
 }
 
 fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
