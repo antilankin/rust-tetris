@@ -62,13 +62,6 @@ fn board_size ()
 }
 
 #[test]
-fn line_access() {
-    let mut line: Line = empty_line ();
-    line [0] = BoardContent::Tetromino(TetrominoType::J);
-    assert_eq! (line [0], BoardContent::Tetromino(TetrominoType::J));
-}
-
-#[test]
 fn board_access() {
     let mut board: Board = empty_board ();
     let position = [2,3];
