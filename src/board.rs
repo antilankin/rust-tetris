@@ -21,9 +21,17 @@ impl Board {
             Some (board_position) => self.safe_get (board_position)
         }
     }
+
+    fn is_empty (&self, pos: Position) -> bool { self.get (pos) == BoardContent::Empty }
     
-    fn set (&mut self, pos: BoardPosition, tetronimo: TetrominoType) {
-         self.lines [pos[1]][pos[0]] = BoardContent::Tetromino(tetronimo);
+    fn set (&mut self, pos: Position, tetronimo: TetrominoType) -> bool {
+        match board_position (pos) {
+            None => false,
+            Some (board_position) => {
+                self.lines [board_position[1]][board_position[0]] = BoardContent::Tetromino(tetronimo);
+                true
+            }
+        }
     }
 }    
 
@@ -70,7 +78,7 @@ fn board_access() {
     let mut board: Board = empty_board ();
     let position = [2,3];
     board.set (position, TetrominoType::I);
-    assert_eq! (board.safe_get (position), BoardContent::Tetromino(TetrominoType::I));
+    assert_eq! (board.get (position), BoardContent::Tetromino(TetrominoType::I));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -85,34 +93,21 @@ fn board_position (pos: Position) -> Option <BoardPosition>
     else { Some ([pos[0] as usize, pos[1] as usize]) }
 }
 
-fn is_empty (board: &Board, position: Position) -> bool
-{
-    board.get (position) == BoardContent::Empty
-}
-
-fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
-{
-    match board_position (position) {
-        Some (safe_position) => board.set (safe_position, tetronimo),
-        None => {}
-    }
-}
-
 #[test]
 fn test_is_empty() {
     let board: Board = empty_board ();
     let position = [3,5];
-    assert! (is_empty (&board, position));
+    assert! (board.is_empty (position));
     
-    assert! (!is_empty (&board, [-1, 0]));
-    assert! (!is_empty (&board, [0, -1]));
-    assert! (!is_empty (&board, [board_width() as i32, 0]));
-    assert! (!is_empty (&board, [0, board_height() as i32]));
+    assert! (!board.is_empty ([-1, 0]));
+    assert! (!board.is_empty ([0, -1]));
+    assert! (!board.is_empty ([board_width() as i32, 0]));
+    assert! (!board.is_empty ([0, board_height() as i32]));
 
-    assert! (is_empty (&board, [board_width() as i32 - 1, 0]));
-    assert! (is_empty (&board, [0, board_height() as i32 - 1]));
+    assert! (board.is_empty ([board_width() as i32 - 1, 0]));
+    assert! (board.is_empty ([0, board_height() as i32 - 1]));
 
     let mut board1 = empty_board();
-    set (&mut board1, position, TetrominoType::O);
-    assert!(!is_empty(&board1, position));
+    board1.set (position, TetrominoType::O);
+    assert!(!board1.is_empty(position));
 }
