@@ -13,7 +13,14 @@ pub struct Board {
 impl Board {
     fn len (&self) -> usize { self.lines.len () }
     
-    fn get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
+    fn safe_get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
+
+    fn get (&self, pos: Position) -> BoardContent {
+        match board_position (pos) {
+            None => BoardContent::Blocked,
+            Some (board_position) => self.safe_get (board_position)
+        }
+    }
     
     fn set (&mut self, pos: BoardPosition, tetronimo: TetrominoType) {
          self.lines [pos[1]][pos[0]] = BoardContent::Tetromino(tetronimo);
@@ -63,7 +70,7 @@ fn board_access() {
     let mut board: Board = empty_board ();
     let position = [2,3];
     board.set (position, TetrominoType::I);
-    assert_eq! (board.get (position), BoardContent::Tetromino(TetrominoType::I));
+    assert_eq! (board.safe_get (position), BoardContent::Tetromino(TetrominoType::I));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -78,17 +85,9 @@ fn board_position (pos: Position) -> Option <BoardPosition>
     else { Some ([pos[0] as usize, pos[1] as usize]) }
 }
 
-fn content (board: &Board, position: Position) -> BoardContent
-{
-    match board_position (position) {
-        None => BoardContent::Blocked,
-        Some (board_position) => board.get (board_position)
-    }
-}
-
 fn is_empty (board: &Board, position: Position) -> bool
 {
-    content (board, position) == BoardContent::Empty
+    board.get (position) == BoardContent::Empty
 }
 
 fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
