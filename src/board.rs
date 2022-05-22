@@ -13,7 +13,7 @@ pub struct Board {
 impl Board {
     fn len (&self) -> usize { self.lines.len () }
     
-    fn get (&self, line: usize, index: usize) -> BoardContent { self.lines [line][index] }
+    fn get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
     
     fn set (&mut self, line: usize, index: usize, tetronimo: TetrominoType) {
          self.lines [line][index] = BoardContent::Tetromino(tetronimo);
@@ -62,7 +62,7 @@ fn line_access() {
 fn board_access() {
     let mut board: Board = empty_board ();
     board.set (3, 2, TetrominoType::I);
-    assert_eq! (board.get (3, 2), BoardContent::Tetromino(TetrominoType::I));
+    assert_eq! (board.get ([2, 3]), BoardContent::Tetromino(TetrominoType::I));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -81,7 +81,7 @@ fn content (board: &Board, position: Position) -> BoardContent
 {
     match board_position (position) {
         None => BoardContent::Blocked,
-        Some (board_position) => board.get (board_position[1], board_position[0])
+        Some (board_position) => board.get (board_position)
     }
 }
 
