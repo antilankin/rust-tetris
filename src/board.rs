@@ -15,8 +15,8 @@ impl Board {
     
     fn get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
     
-    fn set (&mut self, line: usize, index: usize, tetronimo: TetrominoType) {
-         self.lines [line][index] = BoardContent::Tetromino(tetronimo);
+    fn set (&mut self, pos: BoardPosition, tetronimo: TetrominoType) {
+         self.lines [pos[1]][pos[0]] = BoardContent::Tetromino(tetronimo);
     }
 }    
 
@@ -61,8 +61,9 @@ fn line_access() {
 #[test]
 fn board_access() {
     let mut board: Board = empty_board ();
-    board.set (3, 2, TetrominoType::I);
-    assert_eq! (board.get ([2, 3]), BoardContent::Tetromino(TetrominoType::I));
+    let position = [2,3];
+    board.set (position, TetrominoType::I);
+    assert_eq! (board.get (position), BoardContent::Tetromino(TetrominoType::I));
 }
 
 fn check_array_bounds (index: i32, max: usize) -> bool
@@ -93,7 +94,7 @@ fn is_empty (board: &Board, position: Position) -> bool
 fn set (board: &mut Board, position: Position, tetronimo: TetrominoType)
 {
     match board_position (position) {
-        Some (safe_position) => board.set (safe_position [1], safe_position [0], tetronimo),
+        Some (safe_position) => board.set (safe_position, tetronimo),
         None => {}
     }
 }
