@@ -1,6 +1,7 @@
 pub type Line = [TetrominoType; 10];
 pub type Board = [Line; 24];
 pub type Position = [i32; 2];
+pub type BoardPosition = [usize; 2];
 
 const fn board_width () -> usize { 10 }
 const fn board_height () -> usize { 24 }
@@ -47,14 +48,18 @@ fn check_array_bounds (index: i32, max: usize) -> bool
     if index < 0 { false } else { (index as usize) < max }
 }
 
+fn board_position (pos: Position) -> Option <BoardPosition>
+{
+    if !check_array_bounds (pos[0], board_width()) { None }
+    else if !check_array_bounds (pos[1], board_height()) { None }
+    else { Some ([pos[0] as usize, pos[1] as usize]) }
+}
+
 fn is_empty (board: &Board, position: Position) -> bool
 {
-    if !check_array_bounds (position[0], board_width()) { false }
-    else if !check_array_bounds (position[1], board_height()) { false }
-    else {
-        let line_index = position[1] as usize;
-        let line_pos = position[0] as usize;
-        board [line_index] [line_pos] == TetrominoType::Empty
+    match board_position (position) {
+        None => false,
+        Some (board_position) => board [board_position[1]] [board_position[0]] == TetrominoType::Empty
     }
 }
 
