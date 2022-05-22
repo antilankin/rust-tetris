@@ -14,12 +14,10 @@ impl Board {
     fn height (&self) -> usize { self.lines.len () }
     fn width (&self) -> usize { self.lines[0].len () }
     
-    fn safe_get (&self, pos: BoardPosition) -> BoardContent { self.lines [pos[1]][pos[0]] }
-
     fn get (&self, pos: Position) -> BoardContent {
         match board_position (pos) {
             None => BoardContent::Blocked,
-            Some (board_position) => self.safe_get (board_position)
+            Some (board_position) => self.lines [board_position[1]][board_position[0]]
         }
     }
 
