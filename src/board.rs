@@ -1,5 +1,6 @@
 pub type Line = [TetrominoType; 10];
 pub type Board = [Line; 24];
+pub type Position = [i32; 2];
 
 const fn board_width () -> usize { 10 }
 const fn board_height () -> usize { 24 }
@@ -39,4 +40,36 @@ fn board_access() {
     let mut board: Board = empty_board ();
     board [3][2] = TetrominoType::I;
     assert_eq! (board [3][2], TetrominoType::I);
+}
+
+fn is_empty (board: &Board, position: Position) -> bool
+{
+    if position[0] < 0 { false }
+    else if position[1] < 0 { false }
+    else {
+        let line_index = position[1] as usize;
+        let line_pos = position[0] as usize;
+        if line_index >= board_height () { false }
+        else if line_pos >= board_width () { false }
+        else { board [line_index] [line_pos] == TetrominoType::Empty }
+    }
+}
+
+#[test]
+fn test_is_empty() {
+    let board: Board = empty_board ();
+    let position = [3,5];
+    assert! (is_empty (&board, position));
+    
+    assert! (!is_empty (&board, [-1, 0]));
+    assert! (!is_empty (&board, [0, -1]));
+    assert! (!is_empty (&board, [board_width() as i32, 0]));
+    assert! (!is_empty (&board, [0, board_height() as i32]));
+
+    assert! (is_empty (&board, [board_width() as i32 - 1, 0]));
+    assert! (is_empty (&board, [0, board_height() as i32 - 1]));
+
+    let mut board1 = empty_board();
+    board1[4][1] = TetrominoType::O;
+    assert!(!is_empty(&board1, [1, 4]));
 }
