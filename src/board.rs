@@ -1,4 +1,4 @@
-use crate::tetromino::{self, Tetromino, Shape};
+use crate::tetromino::{self, Shape, Tetromino};
 
 const fn board_width() -> usize {
     10
@@ -46,8 +46,17 @@ impl Board {
         }
     }
 
-    fn put(&mut self, pos: Position, tetromino: Tetromino) {
-
+    fn can_put(&self, pos: Position, tetromino: &Tetromino) -> bool {
+        for i in tetromino
+            .blocks()
+            .iter()
+            .map(|p| [p[0] + pos[0], p[1] + pos[1]])
+        {
+            if !self.is_free(i) {
+                return false;
+            }
+        }
+        true
     }
 }
 
@@ -143,8 +152,14 @@ fn test_board_get() {
 
     let mut board1 = empty_board();
     board1.set(position, Shape::I);
-    assert_eq!(
-        board1.get(position),
-        BoardContent::Tetromino(Shape::I)
-    );
+    assert_eq!(board1.get(position), BoardContent::Tetromino(Shape::I));
+}
+
+#[test]
+fn test_can_put() {
+    let board: Board = empty_board();
+    let tetromino = Tetromino::new(Shape::I);
+    assert!(!board.can_put([0, 0], &tetromino));
+    assert!(!board.can_put([0, -1], &tetromino));
+    assert!(board.can_put([1, board_height() as i32 - 1], &tetromino));
 }
