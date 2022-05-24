@@ -4,7 +4,7 @@ pub enum Shape {
 }
 
 pub struct Tetromino {
-    shape: Shape,
+    pub shape: Shape,
     orientation: Orientation,
 }
 
@@ -44,9 +44,9 @@ impl Tetromino {
         match self.shape {
             Shape::I => match self.orientation {
                 Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
-                Orientation::East => [[1, -1], [1, 0], [1, 1], [1, 2]],
-                Orientation::South => [[-1, 1], [0, 1], [1, 1], [2, 1]],
-                Orientation::West => [[0, -1], [0, 0], [0, 1], [0, 2]],
+                Orientation::East => [[1, 1], [1, 0], [1, -1], [1, -2]],
+                Orientation::South => [[-1, -1], [0, -1], [1, -1], [2, -1]],
+                Orientation::West => [[0, 1], [0, 0], [0, -1], [0, -2]],
             },
         }
     }
