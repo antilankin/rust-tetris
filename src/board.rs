@@ -99,3 +99,22 @@ fn test_is_empty() {
     board1.set (position, TetrominoType::O);
     assert!(!board1.is_free(position));
 }
+
+#[test]
+fn test_board_get() {
+    let board: Board = empty_board ();
+    let position = [3,5];
+    assert_eq! (board.get (position), BoardContent::Empty);
+    
+    assert_eq! (board.get ([-1, 0]), BoardContent::Blocked);
+    assert_eq! (board.get ([0, -1]), BoardContent::Blocked);
+    assert_eq! (board.get ([board_width() as i32, 0]), BoardContent::Blocked);
+    assert_eq! (board.get ([0, board_height() as i32]), BoardContent::Blocked);
+
+    assert_eq! (board.get ([board_width() as i32 - 1, 0]), BoardContent::Empty);
+    assert_eq! (board.get ([0, board_height() as i32 - 1]), BoardContent::Empty);
+
+    let mut board1 = empty_board();
+    board1.set (position, TetrominoType::O);
+    assert_eq! (board1.get(position), BoardContent::Tetromino(TetrominoType::O));
+}
