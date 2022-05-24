@@ -1,9 +1,9 @@
-#[derive(Copy, Clone)]
-enum Shape {
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum Shape {
     I,
 }
 
-struct Tetromino {
+pub struct Tetromino {
     shape: Shape,
     orientation: Orientation,
 }
@@ -25,17 +25,6 @@ fn rotate_clockwise(orientation: Orientation) -> Orientation {
     }
 }
 
-fn blocks(shape: Shape, orientation: Orientation) -> [[i32; 2]; 4] {
-    match shape {
-        Shape::I => match orientation {
-            Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
-            Orientation::East => [[1, -1], [1, 0], [1, 1], [1, 2]],
-            Orientation::South => [[-1, 1], [0, 1], [1, 1], [2, 1]],
-            Orientation::West => [[0, -1], [0, 0], [0, 1], [0, 2]],
-        },
-    }
-}
-
 impl Tetromino {
     pub fn new(shape: Shape) -> Self {
         Self {
@@ -48,6 +37,17 @@ impl Tetromino {
         Tetromino {
             shape: self.shape,
             orientation: rotate_clockwise(self.orientation),
+        }
+    }
+
+    pub fn blocks(&self) -> [[i32; 2]; 4] {
+        match self.shape {
+            Shape::I => match self.orientation {
+                Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
+                Orientation::East => [[1, -1], [1, 0], [1, 1], [1, 2]],
+                Orientation::South => [[-1, 1], [0, 1], [1, 1], [2, 1]],
+                Orientation::West => [[0, -1], [0, 0], [0, 1], [0, 2]],
+            },
         }
     }
 }

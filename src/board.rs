@@ -1,3 +1,5 @@
+use crate::tetromino::{self, Tetromino, Shape};
+
 const fn board_width() -> usize {
     10
 }
@@ -33,7 +35,7 @@ impl Board {
         self.get(pos) == BoardContent::Empty
     }
 
-    fn set(&mut self, pos: Position, tetronimo: TetrominoType) -> bool {
+    fn set(&mut self, pos: Position, tetronimo: Shape) -> bool {
         match board_position(pos) {
             None => false,
             Some(board_position) => {
@@ -43,24 +45,17 @@ impl Board {
             }
         }
     }
-}
 
-#[derive(PartialEq, Debug, Copy, Clone)]
-pub enum TetrominoType {
-    I,
-    L,
-    T,
-    Z,
-    S,
-    J,
-    O,
+    fn put(&mut self, pos: Position, tetromino: Tetromino) {
+
+    }
 }
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum BoardContent {
     Empty,
     Blocked,
-    Tetromino(TetrominoType),
+    Tetromino(Shape),
 }
 
 fn empty_line() -> Line {
@@ -83,7 +78,7 @@ fn board_size() {
 fn board_access() {
     let mut board: Board = empty_board();
     let position = [2, 3];
-    let tetromino = TetrominoType::I;
+    let tetromino = Shape::I;
     assert!(board.set(position, tetromino));
     assert!(!board.set([-1, 0], tetromino));
     assert_eq!(board.get(position), BoardContent::Tetromino(tetromino));
@@ -122,7 +117,7 @@ fn test_is_empty() {
     assert!(board.is_free([0, board_height() as i32 - 1]));
 
     let mut board1 = empty_board();
-    board1.set(position, TetrominoType::O);
+    board1.set(position, Shape::I);
     assert!(!board1.is_free(position));
 }
 
@@ -147,9 +142,9 @@ fn test_board_get() {
     );
 
     let mut board1 = empty_board();
-    board1.set(position, TetrominoType::O);
+    board1.set(position, Shape::I);
     assert_eq!(
         board1.get(position),
-        BoardContent::Tetromino(TetrominoType::O)
+        BoardContent::Tetromino(Shape::I)
     );
 }
