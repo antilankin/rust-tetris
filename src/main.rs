@@ -3,5 +3,4 @@ use crate::board::Line;
 
 mod board;
 
-fn main() {
-}
+fn main() {}
