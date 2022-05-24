@@ -170,3 +170,15 @@ fn test_can_put() {
     assert!(!board.can_put([0, -1], &tetromino));
     assert!(board.can_put([1, board_height() as i32 - 1], &tetromino));
 }
+
+#[test]
+fn test_put() {
+    let mut board: Board = empty_board();
+    let tetromino = Tetromino::new(Shape::I);
+    board.put([0, 0], &tetromino);
+    assert_eq!(board.get([0, 0]), BoardContent::Tetromino(Shape::I));
+    assert_eq!(board.get([1, 0]), BoardContent::Tetromino(Shape::I));
+    assert_eq!(board.get([2, 0]), BoardContent::Tetromino(Shape::I));
+    assert_eq!(board.get([3, 0]), BoardContent::Empty);
+    assert_eq!(board.get([0, 1]), BoardContent::Empty);
+}
