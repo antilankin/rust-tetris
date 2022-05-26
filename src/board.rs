@@ -1,4 +1,4 @@
-use crate::tetromino::{self, Shape, Tetromino};
+use crate::tetromino::{Shape, Tetromino};
 
 const fn board_width() -> usize {
     10
@@ -77,7 +77,8 @@ pub enum BoardContent {
 fn empty_line() -> Line {
     [BoardContent::Empty; board_width()]
 }
-fn empty_board() -> Board {
+
+pub fn empty_board() -> Board {
     Board {
         lines: [empty_line(); board_height()],
     }
