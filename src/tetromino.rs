@@ -5,11 +5,11 @@ pub enum Shape {
 
 pub struct Tetromino {
     pub shape: Shape,
-    orientation: Orientation,
+    pub orientation: Orientation,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-enum Orientation {
+pub enum Orientation {
     North,
     East,
     South,
