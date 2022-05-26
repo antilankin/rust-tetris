@@ -46,7 +46,7 @@ impl Board {
         }
     }
 
-    fn can_put(&self, pos: Position, tetromino: &Tetromino) -> bool {
+    pub fn can_put(&self, pos: Position, tetromino: &Tetromino) -> bool {
         for i in tetromino
             .blocks()
             .iter()
