@@ -36,7 +36,7 @@ fn test_spawn() {
 }
 
 #[test]
-fn test_down() {
+fn test_move_down() {
     let board = empty_board();
     let (tetromino, position) = spawn(Shape::I);
     let next_position = move_down(&board, &tetromino, position);
