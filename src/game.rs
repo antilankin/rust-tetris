@@ -44,6 +44,15 @@ fn try_move_down(game: &Game) -> Option<Position> {
         })
 }
 
+fn move_down(game: &mut Game) {
+    if let Some(pos) = try_move_down(game) {
+        match game.current_tetromino {
+            Some((t, _)) => game.current_tetromino = Some((t, pos)),
+            None => {}
+        }
+    };
+}
+
 #[test]
 fn test_spawn() {
     let board = empty_board();
@@ -62,7 +71,7 @@ fn test_spawn() {
 }
 
 #[test]
-fn test_move_down() {
+fn test_try_move_down() {
     let game = new_game();
     let next_position = try_move_down(&game);
     assert_eq!(next_position, None);
@@ -73,4 +82,13 @@ fn test_move_down() {
     let expected_position = current_tetromino_position(&game).map(down);
     assert_ne!(next_position, None);
     assert_eq!(next_position, expected_position);
+}
+
+#[test]
+fn test_move_down() {
+    let mut game = new_game();
+    game.current_tetromino = Some(spawn(Shape::I));
+    let expected_position = current_tetromino_position(&game).map(down);
+    move_down(&mut game);
+    assert_eq!(current_tetromino_position(&game), expected_position);
 }

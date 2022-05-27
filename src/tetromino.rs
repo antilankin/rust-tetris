@@ -3,6 +3,7 @@ pub enum Shape {
     I,
 }
 
+#[derive(Copy, Clone)]
 pub struct Tetromino {
     pub shape: Shape,
     pub orientation: Orientation,
