@@ -29,7 +29,7 @@ fn down(position: Position) -> Position {
     [position[0], position[1] - 1]
 }
 
-fn move_down(game: &Game) -> Option<Position> {
+fn try_move_down(game: &Game) -> Option<Position> {
     current_tetromino_position(game)
         .map(down)
         .and_then(|next_position| {
@@ -64,12 +64,12 @@ fn test_spawn() {
 #[test]
 fn test_move_down() {
     let game = new_game();
-    let next_position = move_down(&game);
+    let next_position = try_move_down(&game);
     assert_eq!(next_position, None);
 
     let mut game = game;
     game.current_tetromino = Some(spawn(Shape::I));
-    let next_position = move_down(&game);
+    let next_position = try_move_down(&game);
     let expected_position = current_tetromino_position(&game).map(down);
     assert_ne!(next_position, None);
     assert_eq!(next_position, expected_position);
