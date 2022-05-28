@@ -29,6 +29,15 @@ fn down(position: Position) -> Position {
     [position[0], position[1] - 1]
 }
 
+fn try_put(game: &Game, position: Position) -> bool {
+    true
+    //    if let Some((tetromino, _)) = game.current_tetromino {
+    //        game.board.can_put(position, &tetromino)
+    //    } else {
+    //        false
+    //    }
+}
+
 fn try_move_down(game: &Game) -> Option<Position> {
     current_tetromino_position(game)
         .map(down)
@@ -95,5 +104,12 @@ mod tests {
         let expected_position = current_tetromino_position(&game).map(down);
         move_down(&mut game);
         assert_eq!(current_tetromino_position(&game), expected_position);
+    }
+
+    #[test]
+    fn test_try_put() {
+        let mut game = new_game();
+        game.current_tetromino = Some(spawn(Shape::I));
+        assert!(try_put(&game, start_position()));
     }
 }
