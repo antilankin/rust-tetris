@@ -84,23 +84,6 @@ pub fn empty_board() -> Board {
     }
 }
 
-#[test]
-fn board_size() {
-    let board: Board = empty_board();
-    assert_eq!(board.height(), board_height());
-    assert_eq!(board.width(), board_width());
-}
-
-#[test]
-fn board_access() {
-    let mut board: Board = empty_board();
-    let position = [2, 3];
-    let tetromino = Shape::I;
-    assert!(board.set(position, tetromino));
-    assert!(!board.set([-1, 0], tetromino));
-    assert_eq!(board.get(position), BoardContent::Tetromino(tetromino));
-}
-
 fn check_array_bounds(index: i32, max: usize) -> bool {
     if index < 0 {
         false
@@ -119,67 +102,89 @@ fn board_position(pos: Position) -> Option<BoardPosition> {
     }
 }
 
-#[test]
-fn test_is_empty() {
-    let board: Board = empty_board();
-    let position = [3, 5];
-    assert!(board.is_free(position));
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    assert!(!board.is_free([-1, 0]));
-    assert!(!board.is_free([0, -1]));
-    assert!(!board.is_free([board_width() as i32, 0]));
-    assert!(!board.is_free([0, board_height() as i32]));
+    #[test]
+    fn test_is_empty() {
+        let board: Board = empty_board();
+        let position = [3, 5];
+        assert!(board.is_free(position));
 
-    assert!(board.is_free([board_width() as i32 - 1, 0]));
-    assert!(board.is_free([0, board_height() as i32 - 1]));
+        assert!(!board.is_free([-1, 0]));
+        assert!(!board.is_free([0, -1]));
+        assert!(!board.is_free([board_width() as i32, 0]));
+        assert!(!board.is_free([0, board_height() as i32]));
 
-    let mut board1 = empty_board();
-    board1.set(position, Shape::I);
-    assert!(!board1.is_free(position));
-}
+        assert!(board.is_free([board_width() as i32 - 1, 0]));
+        assert!(board.is_free([0, board_height() as i32 - 1]));
 
-#[test]
-fn test_board_get() {
-    let board: Board = empty_board();
-    let position = [3, 5];
-    assert_eq!(board.get(position), BoardContent::Empty);
+        let mut board1 = empty_board();
+        board1.set(position, Shape::I);
+        assert!(!board1.is_free(position));
+    }
 
-    assert_eq!(board.get([-1, 0]), BoardContent::Blocked);
-    assert_eq!(board.get([0, -1]), BoardContent::Blocked);
-    assert_eq!(board.get([board_width() as i32, 0]), BoardContent::Blocked);
-    assert_eq!(board.get([0, board_height() as i32]), BoardContent::Blocked);
+    #[test]
+    fn test_board_get() {
+        let board: Board = empty_board();
+        let position = [3, 5];
+        assert_eq!(board.get(position), BoardContent::Empty);
 
-    assert_eq!(
-        board.get([board_width() as i32 - 1, 0]),
-        BoardContent::Empty
-    );
-    assert_eq!(
-        board.get([0, board_height() as i32 - 1]),
-        BoardContent::Empty
-    );
+        assert_eq!(board.get([-1, 0]), BoardContent::Blocked);
+        assert_eq!(board.get([0, -1]), BoardContent::Blocked);
+        assert_eq!(board.get([board_width() as i32, 0]), BoardContent::Blocked);
+        assert_eq!(board.get([0, board_height() as i32]), BoardContent::Blocked);
 
-    let mut board1 = empty_board();
-    board1.set(position, Shape::I);
-    assert_eq!(board1.get(position), BoardContent::Tetromino(Shape::I));
-}
+        assert_eq!(
+            board.get([board_width() as i32 - 1, 0]),
+            BoardContent::Empty
+        );
+        assert_eq!(
+            board.get([0, board_height() as i32 - 1]),
+            BoardContent::Empty
+        );
 
-#[test]
-fn test_can_put() {
-    let board: Board = empty_board();
-    let tetromino = Tetromino::new(Shape::I);
-    assert!(!board.can_put([0, 0], &tetromino));
-    assert!(!board.can_put([0, -1], &tetromino));
-    assert!(board.can_put([1, board_height() as i32 - 1], &tetromino));
-}
+        let mut board1 = empty_board();
+        board1.set(position, Shape::I);
+        assert_eq!(board1.get(position), BoardContent::Tetromino(Shape::I));
+    }
 
-#[test]
-fn test_put() {
-    let mut board: Board = empty_board();
-    let tetromino = Tetromino::new(Shape::I);
-    board.put([0, 0], &tetromino);
-    assert_eq!(board.get([0, 0]), BoardContent::Tetromino(Shape::I));
-    assert_eq!(board.get([1, 0]), BoardContent::Tetromino(Shape::I));
-    assert_eq!(board.get([2, 0]), BoardContent::Tetromino(Shape::I));
-    assert_eq!(board.get([3, 0]), BoardContent::Empty);
-    assert_eq!(board.get([0, 1]), BoardContent::Empty);
+    #[test]
+    fn test_can_put() {
+        let board: Board = empty_board();
+        let tetromino = Tetromino::new(Shape::I);
+        assert!(!board.can_put([0, 0], &tetromino));
+        assert!(!board.can_put([0, -1], &tetromino));
+        assert!(board.can_put([1, board_height() as i32 - 1], &tetromino));
+    }
+
+    #[test]
+    fn test_put() {
+        let mut board: Board = empty_board();
+        let tetromino = Tetromino::new(Shape::I);
+        board.put([0, 0], &tetromino);
+        assert_eq!(board.get([0, 0]), BoardContent::Tetromino(Shape::I));
+        assert_eq!(board.get([1, 0]), BoardContent::Tetromino(Shape::I));
+        assert_eq!(board.get([2, 0]), BoardContent::Tetromino(Shape::I));
+        assert_eq!(board.get([3, 0]), BoardContent::Empty);
+        assert_eq!(board.get([0, 1]), BoardContent::Empty);
+    }
+
+    #[test]
+    fn board_size() {
+        let board: Board = empty_board();
+        assert_eq!(board.height(), board_height());
+        assert_eq!(board.width(), board_width());
+    }
+
+    #[test]
+    fn board_access() {
+        let mut board: Board = empty_board();
+        let position = [2, 3];
+        let tetromino = Shape::I;
+        assert!(board.set(position, tetromino));
+        assert!(!board.set([-1, 0], tetromino));
+        assert_eq!(board.get(position), BoardContent::Tetromino(tetromino));
+    }
 }

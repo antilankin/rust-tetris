@@ -53,14 +53,19 @@ impl Tetromino {
     }
 }
 
-#[test]
-fn test_rotate_tetromino() {
-    let north_tetromino = Tetromino::new(Shape::I);
-    let east_tetromino = north_tetromino.rotate_clockwise();
-    let south_tetromino = east_tetromino.rotate_clockwise();
-    let west_tetromino = south_tetromino.rotate_clockwise();
-    assert_eq!(north_tetromino.orientation, Orientation::North);
-    assert_eq!(east_tetromino.orientation, Orientation::East);
-    assert_eq!(south_tetromino.orientation, Orientation::South);
-    assert_eq!(west_tetromino.orientation, Orientation::West);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rotate_tetromino() {
+        let north_tetromino = Tetromino::new(Shape::I);
+        let east_tetromino = north_tetromino.rotate_clockwise();
+        let south_tetromino = east_tetromino.rotate_clockwise();
+        let west_tetromino = south_tetromino.rotate_clockwise();
+        assert_eq!(north_tetromino.orientation, Orientation::North);
+        assert_eq!(east_tetromino.orientation, Orientation::East);
+        assert_eq!(south_tetromino.orientation, Orientation::South);
+        assert_eq!(west_tetromino.orientation, Orientation::West);
+    }
 }
