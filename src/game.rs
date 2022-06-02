@@ -17,6 +17,11 @@ impl Game {
     pub fn current_position(&self) -> Option<Position> {
         self.current_tetromino.and_then(|c| Some(c.1))
     }
+
+    pub fn spawn(&mut self) {
+        assert!(self.current_tetromino.is_none());
+        self.current_tetromino = Some(spawn(Shape::I));
+    }
 }
 
 fn start_position() -> Position {
@@ -86,7 +91,7 @@ mod tests {
         assert_eq!(next_position, None);
 
         let mut game = game;
-        game.current_tetromino = Some(spawn(Shape::I));
+        game.spawn();
         let next_position = try_move_down(&game);
         let expected_position = game.current_position().map(down);
         assert_ne!(next_position, None);
@@ -96,7 +101,7 @@ mod tests {
     #[test]
     fn test_move_down() {
         let mut game = Game::new();
-        game.current_tetromino = Some(spawn(Shape::I));
+        game.spawn();
         let expected_position = game.current_position().map(down);
         move_down(&mut game);
         assert_eq!(game.current_position(), expected_position);
@@ -105,7 +110,7 @@ mod tests {
     #[test]
     fn test_try_put() {
         let mut game = Game::new();
-        game.current_tetromino = Some(spawn(Shape::I));
+        game.spawn();
         assert!(try_put(&game, start_position()));
         assert!(!try_put(&game, [0, -4]));
     }
