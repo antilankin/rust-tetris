@@ -6,15 +6,17 @@ struct Game {
     current_tetromino: Option<(Tetromino, Position)>,
 }
 
-fn new_game() -> Game {
-    Game {
-        board: empty_board(),
-        current_tetromino: None,
+impl Game {
+    pub fn new() -> Self {
+        Game {
+            board: empty_board(),
+            current_tetromino: None,
+        }
     }
-}
 
-fn current_tetromino_position(game: &Game) -> Option<Position> {
-    game.current_tetromino.as_ref().map(|&(_, p)| p)
+    pub fn current_position(&self) -> Option<Position> {
+        self.current_tetromino.and_then(|c| Some(c.1))
+    }
 }
 
 fn start_position() -> Position {
@@ -38,15 +40,13 @@ fn try_put(game: &Game, position: Position) -> bool {
 }
 
 fn try_move_down(game: &Game) -> Option<Position> {
-    current_tetromino_position(game)
-        .map(down)
-        .and_then(|next_position| {
-            if try_put(game, next_position) {
-                Some(next_position)
-            } else {
-                None
-            }
-        })
+    game.current_position().map(down).and_then(|next_position| {
+        if try_put(game, next_position) {
+            Some(next_position)
+        } else {
+            None
+        }
+    })
 }
 
 fn move_down(game: &mut Game) {
@@ -81,30 +81,30 @@ mod tests {
 
     #[test]
     fn test_try_move_down() {
-        let game = new_game();
+        let game = Game::new();
         let next_position = try_move_down(&game);
         assert_eq!(next_position, None);
 
         let mut game = game;
         game.current_tetromino = Some(spawn(Shape::I));
         let next_position = try_move_down(&game);
-        let expected_position = current_tetromino_position(&game).map(down);
+        let expected_position = game.current_position().map(down);
         assert_ne!(next_position, None);
         assert_eq!(next_position, expected_position);
     }
 
     #[test]
     fn test_move_down() {
-        let mut game = new_game();
+        let mut game = Game::new();
         game.current_tetromino = Some(spawn(Shape::I));
-        let expected_position = current_tetromino_position(&game).map(down);
+        let expected_position = game.current_position().map(down);
         move_down(&mut game);
-        assert_eq!(current_tetromino_position(&game), expected_position);
+        assert_eq!(game.current_position(), expected_position);
     }
 
     #[test]
     fn test_try_put() {
-        let mut game = new_game();
+        let mut game = Game::new();
         game.current_tetromino = Some(spawn(Shape::I));
         assert!(try_put(&game, start_position()));
         assert!(!try_put(&game, [0, -4]));
