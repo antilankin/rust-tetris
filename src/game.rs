@@ -1,9 +1,14 @@
 use crate::board::{empty_board, Board, Position};
 use crate::tetromino::{self, Orientation, Shape, Tetromino};
 
+struct TetrominoOnBoard {
+    tetromino: Tetromino,
+    position: Position,
+}
+
 struct Game {
     board: Board,
-    current_tetromino: Option<(Tetromino, Position)>,
+    current_tetromino: Option<TetrominoOnBoard>,
 }
 
 impl Game {
@@ -15,7 +20,10 @@ impl Game {
     }
 
     fn current_position(&self) -> Option<Position> {
-        self.current_tetromino.and_then(|c| Some(c.1))
+        if let Some(c) = &self.current_tetromino {
+            return Some(c.position);
+        }
+        None
     }
 
     fn spawn(&mut self) {
@@ -23,9 +31,13 @@ impl Game {
     }
 
     fn put_current_tetromino(&mut self) -> bool {
-        if let Some((tetromino, position)) = self.current_tetromino {
-            if self.board.can_put(position, &tetromino) {
-                self.board.put(position, &tetromino);
+        if let Some(tetromino_on_board) = &self.current_tetromino {
+            if self
+                .board
+                .can_put(tetromino_on_board.position, &tetromino_on_board.tetromino)
+            {
+                self.board
+                    .put(tetromino_on_board.position, &tetromino_on_board.tetromino);
                 self.spawn();
                 return true;
             } else {
@@ -36,16 +48,15 @@ impl Game {
     }
 
     fn can_move_down(&self) -> bool {
-        self.current_tetromino
-            .map_or(false, |(tetromino, position)| {
-                self.board.can_put(down(position), &tetromino)
-            })
+        self.current_tetromino.as_ref().map_or(false, |t| {
+            self.board.can_put(down(t.position), &t.tetromino)
+        })
     }
 
     fn can_rotate_clockwise(&self) -> bool {
-        if let Some((mut tetromino, position)) = self.current_tetromino {
-            tetromino = tetromino.rotate_clockwise();
-            return self.board.can_put(position, &tetromino);
+        if let Some(t) = &self.current_tetromino {
+            let new_t = Tetromino::new(t.tetromino.shape).rotate_clockwise();
+            return self.board.can_put(t.position, &new_t);
         }
         false
     }
@@ -55,8 +66,11 @@ fn start_position() -> Position {
     [4, 22]
 }
 
-fn spawn(shape: Shape) -> (Tetromino, Position) {
-    (Tetromino::new(shape), start_position())
+fn spawn(shape: Shape) -> TetrominoOnBoard {
+    TetrominoOnBoard {
+        tetromino: Tetromino::new(shape),
+        position: start_position(),
+    }
 }
 
 fn down(position: Position) -> Position {
@@ -70,17 +84,17 @@ mod tests {
     #[test]
     fn test_spawn() {
         let board = empty_board();
-        let (mut tetromino, position) = spawn(Shape::I);
-        assert_eq!(position, start_position());
+        let mut t = spawn(Shape::I);
+        assert_eq!(t.position, start_position());
         for orientation in [
             Orientation::North,
             Orientation::East,
             Orientation::South,
             Orientation::West,
         ] {
-            assert_eq!(tetromino.orientation, orientation);
-            assert!(board.can_put(position, &tetromino));
-            tetromino = tetromino.rotate_clockwise();
+            assert_eq!(t.tetromino.orientation, orientation);
+            assert!(board.can_put(t.position, &t.tetromino));
+            t.tetromino = t.tetromino.rotate_clockwise();
         }
     }
 
