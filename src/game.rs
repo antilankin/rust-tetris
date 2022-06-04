@@ -44,8 +44,10 @@ impl Game {
     }
 
     fn can_move_down(&self) -> bool {
-        self.current_position()
-            .map_or(false, |position| self.can_put_at(down(position)))
+        self.current_tetromino
+            .map_or(false, |(tetromino, position)| {
+                self.board.can_put(down(position), &tetromino)
+            })
     }
 
     fn can_rotate_clockwise(&self) -> bool {
