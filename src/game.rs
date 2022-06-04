@@ -22,14 +22,6 @@ impl Game {
         self.current_tetromino = Some(spawn(Shape::I));
     }
 
-    fn can_put_at(&self, position: Position) -> bool {
-        if let Some((tetromino, _)) = self.current_tetromino {
-            self.board.can_put(position, &tetromino)
-        } else {
-            false
-        }
-    }
-
     fn put_current_tetromino(&mut self) -> bool {
         if let Some((tetromino, position)) = self.current_tetromino {
             if self.board.can_put(position, &tetromino) {
@@ -103,18 +95,8 @@ mod tests {
 
         let tetromino = Tetromino::new(Shape::I);
         game.board.put(down(start_position()), &tetromino);
-        assert!(game.can_put_at(start_position()));
+        assert!(game.board.can_put(start_position(), &tetromino));
         assert!(!game.can_move_down());
-    }
-
-    #[test]
-    fn test_try_put() {
-        let game = Game::new();
-        assert!(!game.can_put_at(start_position()));
-        let mut game = game;
-        game.spawn();
-        assert!(game.can_put_at(start_position()));
-        assert!(!game.can_put_at([0, -4]));
     }
 
     #[test]
