@@ -30,6 +30,16 @@ impl Game {
             false
         }
     }
+
+    fn put_current_tetronimo(&mut self) -> bool {
+        if let Some((tetromino, position)) = self.current_tetromino {
+            if self.board.can_put(position, &tetromino) {
+                self.board.put(position, &tetromino);
+                return true;
+            }
+        }
+        false
+    }
 }
 
 fn start_position() -> Position {
@@ -115,5 +125,14 @@ mod tests {
         game.spawn();
         assert!(game.can_put(start_position()));
         assert!(!game.can_put([0, -4]));
+    }
+
+    #[test]
+    fn test_put_currrent_tetronimo() {
+        let mut game = Game::new();
+        assert!(!game.put_current_tetronimo());
+        game.spawn();
+        assert!(game.put_current_tetronimo());
+        assert!(!game.put_current_tetronimo());
     }
 }

@@ -59,7 +59,7 @@ impl Board {
         true
     }
 
-    fn put(&mut self, pos: Position, tetromino: &Tetromino) {
+    pub fn put(&mut self, pos: Position, tetromino: &Tetromino) {
         tetromino
             .blocks()
             .map(|p| [p[0] + pos[0], p[1] + pos[1]])
