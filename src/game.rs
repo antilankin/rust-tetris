@@ -1,5 +1,5 @@
 use crate::board::{empty_board, Board, Position};
-use crate::tetromino::{Orientation, Shape, Tetromino};
+use crate::tetromino::{self, Orientation, Shape, Tetromino};
 
 struct Game {
     board: Board,
@@ -47,6 +47,14 @@ impl Game {
         self.current_position()
             .map_or(false, |position| self.can_put(down(position)))
     }
+
+    fn can_rotate_clockwise(&self) -> bool {
+        if let Some((mut tetromino, position)) = self.current_tetromino {
+            tetromino = tetromino.rotate_clockwise();
+            return self.board.can_put(position, &tetromino);
+        }
+        false
+    }
 }
 
 fn start_position() -> Position {
@@ -93,6 +101,7 @@ mod tests {
 
         let tetromino = Tetromino::new(Shape::I);
         game.board.put(down(start_position()), &tetromino);
+        assert!(game.can_put(start_position()));
         assert!(!game.can_move_down());
     }
 
@@ -113,5 +122,19 @@ mod tests {
         game.spawn();
         assert!(game.put_current_tetronimo());
         assert!(!game.put_current_tetronimo());
+    }
+
+    #[test]
+    fn test_can_rotate_clockwise() {
+        let game = Game::new();
+        assert!(!game.can_rotate_clockwise());
+
+        let mut game = game;
+        game.spawn();
+        assert!(game.can_rotate_clockwise());
+
+        let tetromino = Tetromino::new(Shape::I);
+        game.board.put(down(start_position()), &tetromino);
+        assert!(!game.can_rotate_clockwise());
     }
 }
