@@ -14,12 +14,11 @@ impl Game {
         }
     }
 
-    pub fn current_position(&self) -> Option<Position> {
+    fn current_position(&self) -> Option<Position> {
         self.current_tetromino.and_then(|c| Some(c.1))
     }
 
-    pub fn spawn(&mut self) {
-        assert!(self.current_tetromino.is_none());
+    fn spawn(&mut self) {
         self.current_tetromino = Some(spawn(Shape::I));
     }
 
@@ -35,10 +34,18 @@ impl Game {
         if let Some((tetromino, position)) = self.current_tetromino {
             if self.board.can_put(position, &tetromino) {
                 self.board.put(position, &tetromino);
+                self.spawn();
                 return true;
+            } else {
+                self.current_tetromino = None;
             }
         }
         false
+    }
+
+    fn can_move_down(&self) -> bool {
+        self.current_position()
+            .map_or(false, |position| self.can_put(down(position)))
     }
 }
 
@@ -52,25 +59,6 @@ fn spawn(shape: Shape) -> (Tetromino, Position) {
 
 fn down(position: Position) -> Position {
     [position[0], position[1] - 1]
-}
-
-fn try_move_down(game: &Game) -> Option<Position> {
-    game.current_position().map(down).and_then(|next_position| {
-        if game.can_put(next_position) {
-            Some(next_position)
-        } else {
-            None
-        }
-    })
-}
-
-fn move_down(game: &mut Game) {
-    if let Some(pos) = try_move_down(game) {
-        match game.current_tetromino {
-            Some((t, _)) => game.current_tetromino = Some((t, pos)),
-            None => {}
-        }
-    };
 }
 
 #[cfg(test)]
@@ -95,26 +83,17 @@ mod tests {
     }
 
     #[test]
-    fn test_try_move_down() {
+    fn test_can_move_down() {
         let game = Game::new();
-        let next_position = try_move_down(&game);
-        assert_eq!(next_position, None);
+        assert!(!game.can_move_down());
 
         let mut game = game;
         game.spawn();
-        let next_position = try_move_down(&game);
-        let expected_position = game.current_position().map(down);
-        assert_ne!(next_position, None);
-        assert_eq!(next_position, expected_position);
-    }
+        assert!(game.can_move_down());
 
-    #[test]
-    fn test_move_down() {
-        let mut game = Game::new();
-        game.spawn();
-        let expected_position = game.current_position().map(down);
-        move_down(&mut game);
-        assert_eq!(game.current_position(), expected_position);
+        let tetromino = Tetromino::new(Shape::I);
+        game.board.put(down(start_position()), &tetromino);
+        assert!(!game.can_move_down());
     }
 
     #[test]
