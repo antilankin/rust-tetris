@@ -53,8 +53,8 @@ fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [[i32; 2]; 4] {
         Shape::I => match orientation {
             Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
             Orientation::East => [[1, 1], [1, 0], [1, -1], [1, -2]],
-            Orientation::South => [[-1, -1], [0, -1], [1, -1], [2, -1]],
-            Orientation::West => [[0, 1], [0, 0], [0, -1], [0, -2]],
+            Orientation::South => [[2, -1], [1, -1], [0, -1], [-1, -1]],
+            Orientation::West => [[0, -2], [0, -1], [0, 0], [0, 1]],
         },
     }
 }
@@ -105,13 +105,21 @@ mod tests {
             [[0, 1], [0, 0], [1, 0], [1, -1]]
         );
 
-        assert_eq!(
-            rotate_positions_clockwise(
-                tetromino_blocks(Shape::I, Orientation::North),
-                origins_scaled_by_two(Shape::I)
-            ),
-            tetromino_blocks(Shape::I, Orientation::East),
-        )
+        let orientations = [
+            Orientation::North,
+            Orientation::East,
+            Orientation::South,
+            Orientation::West,
+        ];
+        for orientation in orientations {
+            assert_eq!(
+                rotate_positions_clockwise(
+                    tetromino_blocks(Shape::I, orientation),
+                    origins_scaled_by_two(Shape::I)
+                ),
+                tetromino_blocks(Shape::I, rotate_clockwise(orientation)),
+            )
+        }
     }
 
     #[test]
