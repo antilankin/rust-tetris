@@ -1,5 +1,9 @@
 pub type Position = [i32; 2];
 
+pub fn down(position: Position) -> Position {
+    [position[0], position[1] - 1]
+}
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Shape {
     I,
@@ -47,6 +51,10 @@ impl Tetromino {
 
     pub fn get_moved(&self, position: Position) -> Tetromino {
         Tetromino { position, ..*self }
+    }
+
+    pub fn move_down(&self) -> Tetromino {
+        self.get_moved(down(self.position))
     }
 
     pub fn blocks(&self) -> [Position; 4] {

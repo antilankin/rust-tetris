@@ -1,5 +1,5 @@
 use crate::board::{empty_board, Board};
-use crate::tetromino::{Orientation, Position, Shape, Tetromino};
+use crate::tetromino::{down, Orientation, Position, Shape, Tetromino};
 
 struct Game {
     board: Board,
@@ -58,10 +58,6 @@ fn start_position() -> Position {
 
 fn spawn(shape: Shape) -> Tetromino {
     Tetromino::new(start_position(), shape)
-}
-
-fn down(position: Position) -> Position {
-    [position[0], position[1] - 1]
 }
 
 #[cfg(test)]
