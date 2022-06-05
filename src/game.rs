@@ -1,5 +1,5 @@
-use crate::board::{empty_board, Board, Position};
-use crate::tetromino::{Orientation, Shape, Tetromino};
+use crate::board::{empty_board, Board};
+use crate::tetromino::{Orientation, Position, Shape, Tetromino};
 
 struct TetrominoOnBoard {
     tetromino: Tetromino,

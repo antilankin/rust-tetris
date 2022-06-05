@@ -1,4 +1,4 @@
-use crate::tetromino::{Shape, Tetromino};
+use crate::tetromino::{Position, Shape, Tetromino};
 
 const fn board_width() -> usize {
     10
@@ -7,7 +7,6 @@ const fn board_height() -> usize {
     24
 }
 
-pub type Position = [i32; 2];
 pub type BoardPosition = [usize; 2];
 
 pub type Line = [BoardContent; board_width()];

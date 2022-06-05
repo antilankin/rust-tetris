@@ -1,3 +1,5 @@
+pub type Position = [i32; 2];
+
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Shape {
     I,
