@@ -71,7 +71,7 @@ fn start_position() -> Position {
 
 fn spawn(shape: Shape) -> TetrominoOnBoard {
     TetrominoOnBoard {
-        tetromino: Tetromino::new(shape),
+        tetromino: Tetromino::new(start_position(), shape),
         position: start_position(),
     }
 }
@@ -107,7 +107,7 @@ mod tests {
         game.spawn();
         assert!(game.can_move_down());
 
-        let tetromino = Tetromino::new(Shape::I);
+        let tetromino = Tetromino::new(down(start_position()), Shape::I);
         game.board.put(down(start_position()), &tetromino);
         assert!(game.board.can_put(start_position(), &tetromino));
         assert!(!game.can_move_down());
@@ -122,6 +122,7 @@ mod tests {
         game.board.put(
             down(down(start_position())),
             &Tetromino {
+                position: down(start_position()),
                 shape: Shape::I,
                 orientation: Orientation::North,
             },
@@ -142,7 +143,7 @@ mod tests {
         let mut game = Game::new();
         assert!(game.can_rotate_clockwise());
 
-        let tetromino = Tetromino::new(Shape::I);
+        let tetromino = Tetromino::new(start_position(), Shape::I);
         game.board.put(down(start_position()), &tetromino);
         assert!(!game.can_rotate_clockwise());
     }

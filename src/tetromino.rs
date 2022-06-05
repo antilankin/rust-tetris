@@ -7,6 +7,7 @@ pub enum Shape {
 
 #[derive(Copy, Clone)]
 pub struct Tetromino {
+    pub position: Position,
     pub shape: Shape,
     pub orientation: Orientation,
 }
@@ -29,8 +30,9 @@ fn rotate_clockwise(orientation: Orientation) -> Orientation {
 }
 
 impl Tetromino {
-    pub fn new(shape: Shape) -> Self {
+    pub fn new(position: Position, shape: Shape) -> Self {
         Self {
+            position,
             shape,
             orientation: Orientation::North,
         }
@@ -38,6 +40,7 @@ impl Tetromino {
 
     pub fn rotate_clockwise(&self) -> Tetromino {
         Tetromino {
+            position: self.position,
             shape: self.shape,
             orientation: rotate_clockwise(self.orientation),
         }
@@ -124,7 +127,7 @@ mod tests {
 
     #[test]
     fn test_rotate_tetromino() {
-        let north_tetromino = Tetromino::new(Shape::I);
+        let north_tetromino = Tetromino::new([0, 0], Shape::I);
         let east_tetromino = north_tetromino.rotate_clockwise();
         let south_tetromino = east_tetromino.rotate_clockwise();
         let west_tetromino = south_tetromino.rotate_clockwise();
