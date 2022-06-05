@@ -14,8 +14,9 @@ impl Game {
         }
     }
 
-    fn spawn(&mut self) {
+    fn spawn(&mut self) -> bool {
         self.current_tetromino = spawn(Shape::I);
+        self.board.can_put(&self.current_tetromino)
     }
 
     fn put_current_tetromino(&mut self) -> bool {
@@ -44,6 +45,15 @@ impl Game {
         self.board
             .can_put(&self.current_tetromino.rotate_clockwise())
     }
+
+    fn rotate_clockwise(&mut self) -> bool {
+        let new_t = self.current_tetromino.rotate_clockwise();
+        if self.board.can_put(&new_t) {
+            self.current_tetromino = new_t;
+            return true;
+        }
+        false
+    }
 }
 
 fn start_position() -> Position {
@@ -60,18 +70,17 @@ mod tests {
 
     #[test]
     fn test_spawn() {
-        let board = empty_board();
-        let mut t = spawn(Shape::I);
-        assert_eq!(t.position, start_position());
+        let mut game = Game::new();
+        assert_eq!(game.current_tetromino.position, start_position());
         for orientation in [
             Orientation::North,
             Orientation::East,
             Orientation::South,
             Orientation::West,
         ] {
-            assert_eq!(t.orientation, orientation);
-            assert!(board.can_put(&t));
-            t = t.rotate_clockwise();
+            assert_eq!(game.current_tetromino.orientation, orientation);
+            assert!(game.board.can_put(&game.current_tetromino));
+            game.rotate_clockwise();
         }
     }
 
