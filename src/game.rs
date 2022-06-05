@@ -8,64 +8,60 @@ struct TetrominoOnBoard {
 
 struct Game {
     board: Board,
-    current_tetromino: Option<TetrominoOnBoard>,
+    current_tetromino: TetrominoOnBoard,
 }
 
 impl Game {
     pub fn new() -> Self {
         Game {
             board: empty_board(),
-            current_tetromino: None,
+            current_tetromino: spawn(Shape::I),
         }
     }
 
     fn spawn(&mut self) {
-        self.current_tetromino = Some(spawn(Shape::I));
+        self.current_tetromino = spawn(Shape::I);
     }
 
     fn put_current_tetromino(&mut self) -> bool {
-        if let Some(tetromino_on_board) = &self.current_tetromino {
-            if self
-                .board
-                .can_put(tetromino_on_board.position, &tetromino_on_board.tetromino)
-            {
-                self.board
-                    .put(tetromino_on_board.position, &tetromino_on_board.tetromino);
-                self.spawn();
-                return true;
-            } else {
-                self.current_tetromino = None;
-            }
+        if self.board.can_put(
+            self.current_tetromino.position,
+            &self.current_tetromino.tetromino,
+        ) {
+            self.board.put(
+                self.current_tetromino.position,
+                &self.current_tetromino.tetromino,
+            );
+            self.spawn();
+            return true;
         }
         false
     }
 
     fn can_move_down(&self) -> bool {
-        self.current_tetromino.as_ref().map_or(false, |t| {
-            self.board.can_put(down(t.position), &t.tetromino)
-        })
+        self.board.can_put(
+            down(self.current_tetromino.position),
+            &self.current_tetromino.tetromino,
+        )
     }
 
     fn move_down(&mut self) -> bool {
-        if let Some(t) = &self.current_tetromino {
-            let new_t = TetrominoOnBoard {
-                tetromino: t.tetromino,
-                position: down(t.position),
-            };
-            if self.board.can_put(new_t.position, &new_t.tetromino) {
-                self.current_tetromino = Some(new_t);
-                return true;
-            }
+        let new_t = TetrominoOnBoard {
+            tetromino: self.current_tetromino.tetromino,
+            position: down(self.current_tetromino.position),
+        };
+        if self.board.can_put(new_t.position, &new_t.tetromino) {
+            self.current_tetromino = new_t;
+            return true;
         }
         false
     }
 
     fn can_rotate_clockwise(&self) -> bool {
-        if let Some(t) = &self.current_tetromino {
-            let new_t = Tetromino::new(t.tetromino.shape).rotate_clockwise();
-            return self.board.can_put(t.position, &new_t);
-        }
-        false
+        self.board.can_put(
+            self.current_tetromino.position,
+            &self.current_tetromino.tetromino.rotate_clockwise(),
+        )
     }
 }
 
@@ -107,10 +103,7 @@ mod tests {
 
     #[test]
     fn test_can_move_down() {
-        let game = Game::new();
-        assert!(!game.can_move_down());
-
-        let mut game = game;
+        let mut game = Game::new();
         game.spawn();
         assert!(game.can_move_down());
 
@@ -123,8 +116,6 @@ mod tests {
     #[test]
     fn test_move_down() {
         let mut game = Game::new();
-        assert!(!game.can_move_down());
-
         game.spawn();
         assert!(game.move_down());
 
@@ -142,19 +133,13 @@ mod tests {
     #[test]
     fn test_put_currrent_tetronimo() {
         let mut game = Game::new();
-        assert!(!game.put_current_tetromino());
-        game.spawn();
         assert!(game.put_current_tetromino());
         assert!(!game.put_current_tetromino());
     }
 
     #[test]
     fn test_can_rotate_clockwise() {
-        let game = Game::new();
-        assert!(!game.can_rotate_clockwise());
-
-        let mut game = game;
-        game.spawn();
+        let mut game = Game::new();
         assert!(game.can_rotate_clockwise());
 
         let tetromino = Tetromino::new(Shape::I);
