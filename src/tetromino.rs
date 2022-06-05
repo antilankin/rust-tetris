@@ -43,12 +43,12 @@ impl Tetromino {
         }
     }
 
-    pub fn blocks(&self) -> [[i32; 2]; 4] {
+    pub fn blocks(&self) -> [Position; 4] {
         tetromino_blocks(self.shape, self.orientation)
     }
 }
 
-fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [[i32; 2]; 4] {
+fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
     match shape {
         Shape::I => match orientation {
             Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
@@ -59,7 +59,7 @@ fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [[i32; 2]; 4] {
     }
 }
 
-fn rotate_position_clockwise(position: [i32; 2], origin_scaled_by_two: [i32; 2]) -> [i32; 2] {
+fn rotate_position_clockwise(position: Position, origin_scaled_by_two: Position) -> Position {
     let x = position[0] * 2 - origin_scaled_by_two[0];
     let y = position[1] * 2 - origin_scaled_by_two[1];
     let x_t = (y + origin_scaled_by_two[0]) / 2;
@@ -68,17 +68,17 @@ fn rotate_position_clockwise(position: [i32; 2], origin_scaled_by_two: [i32; 2])
 }
 
 fn rotate_positions_clockwise(
-    coordinates: [[i32; 2]; 4],
-    origin_scaled_by_two: [i32; 2],
-) -> [[i32; 2]; 4] {
-    let mut new_coordinates: [[i32; 2]; 4] = coordinates;
+    coordinates: [Position; 4],
+    origin_scaled_by_two: Position,
+) -> [Position; 4] {
+    let mut new_coordinates: [Position; 4] = coordinates;
     for (i, val) in coordinates.iter().enumerate() {
         new_coordinates[i] = rotate_position_clockwise(*val, origin_scaled_by_two)
     }
     new_coordinates
 }
 
-fn origins_scaled_by_two(shape: Shape) -> [i32; 2] {
+fn origins_scaled_by_two(shape: Shape) -> Position {
     match shape {
         Shape::I => [1, -1],
     }
