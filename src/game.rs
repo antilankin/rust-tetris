@@ -66,8 +66,6 @@ fn down(position: Position) -> Position {
 
 #[cfg(test)]
 mod tests {
-    use crate::tetromino;
-
     use super::*;
 
     #[test]
