@@ -85,6 +85,14 @@ mod tests {
     }
 
     #[test]
+    fn test_spawn() {
+        let mut game = Game::new();
+        assert!(game.spawn());
+        game.put_current_tetromino();
+        assert!(!game.spawn());
+    }
+
+    #[test]
     fn test_can_move_down() {
         let mut game = Game::new();
         game.spawn();
