@@ -28,17 +28,11 @@ impl Game {
     }
 
     fn can_move_down(&self) -> bool {
-        self.board.can_put(
-            &self
-                .current_tetromino
-                .get_moved(down(self.current_tetromino.position)),
-        )
+        self.board.can_put(&self.current_tetromino.move_down())
     }
 
     fn move_down(&mut self) -> bool {
-        let new_t = self
-            .current_tetromino
-            .get_moved(down(self.current_tetromino.position));
+        let new_t = self.current_tetromino.move_down();
         if self.board.can_put(&new_t) {
             self.current_tetromino = new_t;
             return true;
@@ -88,7 +82,7 @@ mod tests {
         assert!(game.can_move_down());
 
         let tetromino = Tetromino::new(start_position(), Shape::I);
-        game.board.put(&tetromino.get_moved(down(start_position())));
+        game.board.put(&tetromino.move_down());
         assert!(game.board.can_put(&tetromino));
         assert!(!game.can_move_down());
     }
@@ -115,7 +109,7 @@ mod tests {
         assert!(game.can_rotate_clockwise());
 
         let tetromino = Tetromino::new(start_position(), Shape::I);
-        game.board.put(&tetromino.get_moved(down(start_position())));
+        game.board.put(&tetromino.move_down());
         assert!(!game.can_rotate_clockwise());
     }
 }
