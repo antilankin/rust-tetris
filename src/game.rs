@@ -19,13 +19,6 @@ impl Game {
         }
     }
 
-    fn current_position(&self) -> Option<Position> {
-        if let Some(c) = &self.current_tetromino {
-            return Some(c.position);
-        }
-        None
-    }
-
     fn spawn(&mut self) {
         self.current_tetromino = Some(spawn(Shape::I));
     }
