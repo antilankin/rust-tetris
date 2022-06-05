@@ -1,5 +1,3 @@
-use std::path::Components;
-
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Shape {
     I,
