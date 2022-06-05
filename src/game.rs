@@ -69,7 +69,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_spawn() {
+    fn test_starting_position() {
         let mut game = Game::new();
         assert_eq!(game.current_tetromino.position, start_position());
         for orientation in [
