@@ -127,6 +127,16 @@ mod tests {
 
         game.spawn();
         assert!(game.move_down());
+
+        game.board.put(
+            down(down(start_position())),
+            &Tetromino {
+                shape: Shape::I,
+                orientation: Orientation::North,
+            },
+        );
+
+        assert!(!game.move_down());
     }
 
     #[test]
