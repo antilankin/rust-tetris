@@ -40,10 +40,13 @@ impl Tetromino {
 
     pub fn rotate_clockwise(&self) -> Tetromino {
         Tetromino {
-            position: self.position,
-            shape: self.shape,
             orientation: rotate_clockwise(self.orientation),
+            ..*self
         }
+    }
+
+    pub fn get_moved(&self, position: Position) -> Tetromino {
+        Tetromino { position, ..*self }
     }
 
     pub fn blocks(&self) -> [Position; 4] {

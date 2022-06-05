@@ -45,11 +45,11 @@ impl Board {
         }
     }
 
-    pub fn can_put(&self, pos: Position, tetromino: &Tetromino) -> bool {
+    pub fn can_put(&self, tetromino: &Tetromino) -> bool {
         for i in tetromino
             .blocks()
             .iter()
-            .map(|p| [p[0] + pos[0], p[1] + pos[1]])
+            .map(|p| [p[0] + tetromino.position[0], p[1] + tetromino.position[1]])
         {
             if !self.is_free(i) {
                 return false;
@@ -58,10 +58,10 @@ impl Board {
         true
     }
 
-    pub fn put(&mut self, pos: Position, tetromino: &Tetromino) {
+    pub fn put(&mut self, tetromino: &Tetromino) {
         tetromino
             .blocks()
-            .map(|p| [p[0] + pos[0], p[1] + pos[1]])
+            .map(|p| [p[0] + tetromino.position[0], p[1] + tetromino.position[1]])
             .map(|p| self.set(p, tetromino.shape));
     }
 }
@@ -153,16 +153,16 @@ mod tests {
     fn test_can_put() {
         let board: Board = empty_board();
         let tetromino = Tetromino::new([0, 0], Shape::I);
-        assert!(!board.can_put([0, 0], &tetromino));
-        assert!(!board.can_put([0, -1], &tetromino));
-        assert!(board.can_put([1, board_height() as i32 - 1], &tetromino));
+        assert!(!board.can_put(&tetromino));
+        assert!(!board.can_put(&tetromino.get_moved([0, -1])));
+        assert!(board.can_put(&tetromino.get_moved([1, board_height() as i32 - 1])));
     }
 
     #[test]
     fn test_put() {
         let mut board: Board = empty_board();
         let tetromino = Tetromino::new([0, 0], Shape::I);
-        board.put([0, 0], &tetromino);
+        board.put(&tetromino);
         assert_eq!(board.get([0, 0]), BoardContent::Tetromino(Shape::I));
         assert_eq!(board.get([1, 0]), BoardContent::Tetromino(Shape::I));
         assert_eq!(board.get([2, 0]), BoardContent::Tetromino(Shape::I));

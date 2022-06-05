@@ -1,14 +1,9 @@
 use crate::board::{empty_board, Board};
 use crate::tetromino::{Orientation, Position, Shape, Tetromino};
 
-struct TetrominoOnBoard {
-    tetromino: Tetromino,
-    position: Position,
-}
-
 struct Game {
     board: Board,
-    current_tetromino: TetrominoOnBoard,
+    current_tetromino: Tetromino,
 }
 
 impl Game {
@@ -24,14 +19,8 @@ impl Game {
     }
 
     fn put_current_tetromino(&mut self) -> bool {
-        if self.board.can_put(
-            self.current_tetromino.position,
-            &self.current_tetromino.tetromino,
-        ) {
-            self.board.put(
-                self.current_tetromino.position,
-                &self.current_tetromino.tetromino,
-            );
+        if self.board.can_put(&self.current_tetromino) {
+            self.board.put(&self.current_tetromino);
             self.spawn();
             return true;
         }
@@ -40,17 +29,17 @@ impl Game {
 
     fn can_move_down(&self) -> bool {
         self.board.can_put(
-            down(self.current_tetromino.position),
-            &self.current_tetromino.tetromino,
+            &self
+                .current_tetromino
+                .get_moved(down(self.current_tetromino.position)),
         )
     }
 
     fn move_down(&mut self) -> bool {
-        let new_t = TetrominoOnBoard {
-            tetromino: self.current_tetromino.tetromino,
-            position: down(self.current_tetromino.position),
-        };
-        if self.board.can_put(new_t.position, &new_t.tetromino) {
+        let new_t = self
+            .current_tetromino
+            .get_moved(down(self.current_tetromino.position));
+        if self.board.can_put(&new_t) {
             self.current_tetromino = new_t;
             return true;
         }
@@ -58,10 +47,8 @@ impl Game {
     }
 
     fn can_rotate_clockwise(&self) -> bool {
-        self.board.can_put(
-            self.current_tetromino.position,
-            &self.current_tetromino.tetromino.rotate_clockwise(),
-        )
+        self.board
+            .can_put(&self.current_tetromino.rotate_clockwise())
     }
 }
 
@@ -69,11 +56,8 @@ fn start_position() -> Position {
     [4, 22]
 }
 
-fn spawn(shape: Shape) -> TetrominoOnBoard {
-    TetrominoOnBoard {
-        tetromino: Tetromino::new(start_position(), shape),
-        position: start_position(),
-    }
+fn spawn(shape: Shape) -> Tetromino {
+    Tetromino::new(start_position(), shape)
 }
 
 fn down(position: Position) -> Position {
@@ -82,6 +66,8 @@ fn down(position: Position) -> Position {
 
 #[cfg(test)]
 mod tests {
+    use crate::tetromino;
+
     use super::*;
 
     #[test]
@@ -95,9 +81,9 @@ mod tests {
             Orientation::South,
             Orientation::West,
         ] {
-            assert_eq!(t.tetromino.orientation, orientation);
-            assert!(board.can_put(t.position, &t.tetromino));
-            t.tetromino = t.tetromino.rotate_clockwise();
+            assert_eq!(t.orientation, orientation);
+            assert!(board.can_put(&t));
+            t = t.rotate_clockwise();
         }
     }
 
@@ -107,9 +93,9 @@ mod tests {
         game.spawn();
         assert!(game.can_move_down());
 
-        let tetromino = Tetromino::new(down(start_position()), Shape::I);
-        game.board.put(down(start_position()), &tetromino);
-        assert!(game.board.can_put(start_position(), &tetromino));
+        let tetromino = Tetromino::new(start_position(), Shape::I);
+        game.board.put(&tetromino.get_moved(down(start_position())));
+        assert!(game.board.can_put(&tetromino));
         assert!(!game.can_move_down());
     }
 
@@ -118,16 +104,7 @@ mod tests {
         let mut game = Game::new();
         game.spawn();
         assert!(game.move_down());
-
-        game.board.put(
-            down(down(start_position())),
-            &Tetromino {
-                position: down(start_position()),
-                shape: Shape::I,
-                orientation: Orientation::North,
-            },
-        );
-
+        game.put_current_tetromino();
         assert!(!game.move_down());
     }
 
@@ -144,7 +121,7 @@ mod tests {
         assert!(game.can_rotate_clockwise());
 
         let tetromino = Tetromino::new(start_position(), Shape::I);
-        game.board.put(down(start_position()), &tetromino);
+        game.board.put(&tetromino.get_moved(down(start_position())));
         assert!(!game.can_rotate_clockwise());
     }
 }
