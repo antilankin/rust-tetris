@@ -57,7 +57,7 @@ impl Game {
 }
 
 fn start_position() -> Position {
-    [4, 22]
+    Position::new(4, 22)
 }
 
 fn spawn(shape: Shape) -> Tetromino {

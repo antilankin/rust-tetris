@@ -1,7 +1,77 @@
-pub type Position = [i32; 2];
+use std::ops;
+
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Position {
+    pub x: i32,
+    pub y: i32,
+}
+
+impl Position {
+    pub fn new(x: i32, y: i32) -> Self {
+        Position { x, y }
+    }
+
+    fn transposed(&self) -> Position {
+        Position {
+            x: self.y,
+            y: self.x,
+        }
+    }
+}
+
+impl ops::Add<Position> for Position {
+    type Output = Position;
+
+    fn add(self, rhs: Position) -> Position {
+        Position::new(self.x + rhs.x, self.y + rhs.y)
+    }
+}
+
+impl ops::Add<[i32; 2]> for Position {
+    type Output = Position;
+
+    fn add(self, rhs: [i32; 2]) -> Position {
+        self + Position::new(rhs[0], rhs[1])
+    }
+}
+
+impl ops::Sub<Position> for Position {
+    type Output = Position;
+
+    fn sub(self, rhs: Position) -> Position {
+        self + Position::new(-rhs.x, -rhs.y)
+    }
+}
+
+impl ops::Sub<[i32; 2]> for Position {
+    type Output = Position;
+
+    fn sub(self, rhs: [i32; 2]) -> Position {
+        self - Position::new(rhs[0], rhs[1])
+    }
+}
+
+impl ops::Mul<i32> for Position {
+    type Output = Position;
+
+    fn mul(self, rhs: i32) -> Position {
+        Position::new(self.x * rhs, self.y * rhs)
+    }
+}
+
+impl ops::Div<i32> for Position {
+    type Output = Position;
+
+    fn div(self, rhs: i32) -> Position {
+        if rhs == 0 {
+            panic!();
+        }
+        Position::new(self.x / rhs, self.y / rhs)
+    }
+}
 
 pub fn down(position: Position) -> Position {
-    [position[0], position[1] - 1]
+    position - [0, 1]
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -62,39 +132,32 @@ impl Tetromino {
     }
 }
 
+fn toPosition(values: [[i32; 2]; 4]) -> [Position; 4] {
+    values.map(|[x, y]| Position::new(x, y))
+}
+
 fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
-    match shape {
+    toPosition(match shape {
         Shape::I => match orientation {
             Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
             Orientation::East => [[1, 1], [1, 0], [1, -1], [1, -2]],
             Orientation::South => [[2, -1], [1, -1], [0, -1], [-1, -1]],
             Orientation::West => [[0, -2], [0, -1], [0, 0], [0, 1]],
         },
-    }
+    })
 }
 
-fn rotate_position_clockwise(position: Position, origin_scaled_by_two: Position) -> Position {
-    let x = position[0] * 2 - origin_scaled_by_two[0];
-    let y = position[1] * 2 - origin_scaled_by_two[1];
-    let x_t = (y + origin_scaled_by_two[0]) / 2;
-    let y_t = (-x + origin_scaled_by_two[1]) / 2;
-    [x_t, y_t]
+fn rotate_position_clockwise(position: Position) -> Position {
+    Position::new(position.y, -position.x)
 }
 
-fn rotate_positions_clockwise(
-    coordinates: [Position; 4],
-    origin_scaled_by_two: Position,
-) -> [Position; 4] {
-    let mut new_coordinates: [Position; 4] = coordinates;
-    for (i, val) in coordinates.iter().enumerate() {
-        new_coordinates[i] = rotate_position_clockwise(*val, origin_scaled_by_two)
-    }
-    new_coordinates
+fn rotate_positions_clockwise(coordinates: [Position; 4]) -> [Position; 4] {
+    coordinates.map(rotate_position_clockwise)
 }
 
 fn origins_scaled_by_two(shape: Shape) -> Position {
     match shape {
-        Shape::I => [1, -1],
+        Shape::I => Position::new(1, -1),
     }
 }
 
@@ -104,19 +167,14 @@ mod tests {
 
     #[test]
     fn test_rotate_position_clockwise() {
-        assert_eq!(rotate_position_clockwise([1, 1], [0, 0]), [1, -1]);
-        assert_eq!(rotate_position_clockwise([1, -1], [0, 0]), [-1, -1]);
-        assert_eq!(rotate_position_clockwise([0, 0], [1, -1]), [1, 0]);
-        assert_eq!(rotate_position_clockwise([1, 0], [1, 1]), [0, 0]);
-
         assert_eq!(
-            rotate_positions_clockwise([[-1, 0], [0, 0], [1, 0], [2, 0]], [1, -1]),
-            [[1, 1], [1, 0], [1, -1], [1, -2]]
+            rotate_position_clockwise(Position::new(1, 0)),
+            Position::new(0, -1)
         );
 
         assert_eq!(
-            rotate_positions_clockwise([[-1, 0], [0, 0], [0, 1], [1, 1]], [0, 0]),
-            [[0, 1], [0, 0], [1, 0], [1, -1]]
+            rotate_position_clockwise(Position::new(0, 1)),
+            Position::new(1, 0)
         );
 
         let orientations = [
@@ -127,10 +185,7 @@ mod tests {
         ];
         for orientation in orientations {
             assert_eq!(
-                rotate_positions_clockwise(
-                    tetromino_blocks(Shape::I, orientation),
-                    origins_scaled_by_two(Shape::I)
-                ),
+                rotate_positions_clockwise(tetromino_blocks(Shape::I, orientation)),
                 tetromino_blocks(Shape::I, rotate_clockwise(orientation)),
             )
         }
@@ -138,7 +193,7 @@ mod tests {
 
     #[test]
     fn test_rotate_tetromino() {
-        let north_tetromino = Tetromino::new([0, 0], Shape::I);
+        let north_tetromino = Tetromino::new(Position::new(0, 0), Shape::I);
         let east_tetromino = north_tetromino.rotate_clockwise();
         let south_tetromino = east_tetromino.rotate_clockwise();
         let west_tetromino = south_tetromino.rotate_clockwise();
