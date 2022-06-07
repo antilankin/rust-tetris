@@ -154,8 +154,10 @@ mod tests {
     fn test_rotate_clockwise() {
         let mut game = Game::new();
         game.spawn();
+        let expected_orientation = game.current_tetromino.get_rotated_clockwise().orientation;
         assert!(game.rotate_clockwise());
         println!("{:?}", game.current_tetromino.position);
-        assert!(game.current_tetromino.position == start_position() + [1, 0])
+        assert!(game.current_tetromino.position == start_position() + [1, 0]);
+        assert!(game.current_tetromino.orientation == expected_orientation);
     }
 }
