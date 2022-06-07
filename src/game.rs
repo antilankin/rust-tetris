@@ -29,7 +29,7 @@ impl Game {
     }
 
     fn move_down(&mut self) -> bool {
-        let new_t = self.current_tetromino.move_down();
+        let new_t = self.current_tetromino.get_moved_down();
         if self.board.can_put(&new_t) {
             self.current_tetromino = new_t;
             return true;
@@ -39,7 +39,7 @@ impl Game {
 
     fn rotate_clockwise(&mut self) -> bool {
         let cur_t = &self.current_tetromino;
-        let new_t = cur_t.rotate_clockwise();
+        let new_t = cur_t.get_rotated_clockwise();
 
         for offset in offsets(cur_t.shape, cur_t.orientation, new_t.orientation) {
             let test_t = new_t.get_offset(offset);

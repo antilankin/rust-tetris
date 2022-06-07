@@ -112,7 +112,7 @@ impl Tetromino {
         }
     }
 
-    pub fn rotate_clockwise(&self) -> Tetromino {
+    pub fn get_rotated_clockwise(&self) -> Tetromino {
         Tetromino {
             orientation: rotate_clockwise(self.orientation),
             ..*self
@@ -130,8 +130,8 @@ impl Tetromino {
         }
     }
 
-    pub fn move_down(&self) -> Tetromino {
-        self.get_moved(down(self.position))
+    pub fn get_moved_down(&self) -> Tetromino {
+        self.get_offset([0, -1])
     }
 
     pub fn blocks(&self) -> [Position; 4] {
@@ -192,9 +192,9 @@ mod tests {
     #[test]
     fn test_rotate_tetromino() {
         let north_tetromino = Tetromino::new(Position::new(0, 0), Shape::I);
-        let east_tetromino = north_tetromino.rotate_clockwise();
-        let south_tetromino = east_tetromino.rotate_clockwise();
-        let west_tetromino = south_tetromino.rotate_clockwise();
+        let east_tetromino = north_tetromino.get_rotated_clockwise();
+        let south_tetromino = east_tetromino.get_rotated_clockwise();
+        let west_tetromino = south_tetromino.get_rotated_clockwise();
         assert_eq!(north_tetromino.orientation, Orientation::North);
         assert_eq!(east_tetromino.orientation, Orientation::East);
         assert_eq!(south_tetromino.orientation, Orientation::South);
