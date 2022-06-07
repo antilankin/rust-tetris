@@ -73,6 +73,15 @@ fn empty_line() -> Line {
     [BoardContent::Empty; board_width()]
 }
 
+fn is_line_full(line: &Line) -> bool {
+    for content in line.iter() {
+        if content == &BoardContent::Empty {
+            return false;
+        }
+    }
+    true
+}
+
 pub fn empty_board() -> Board {
     Board {
         lines: [empty_line(); board_height()],
@@ -196,5 +205,22 @@ mod tests {
         assert!(board.set(position, tetromino));
         assert!(!board.set(Position::new(-1, 0), tetromino));
         assert_eq!(board.get(position), BoardContent::Tetromino(tetromino));
+    }
+
+    #[test]
+    fn test_line_full() {
+        let board: Board = empty_board();
+        assert!(!is_line_full(&board.lines[0]));
+        let mut board = board;
+
+        for i in 0..6 {
+            board.lines[4][i] = BoardContent::Tetromino(Shape::I);
+        }
+        assert!(!is_line_full(&board.lines[4]));
+
+        for content in &mut board.lines[4] {
+            *content = BoardContent::Tetromino(Shape::I);
+        }
+        assert!(is_line_full(&board.lines[4]));
     }
 }
