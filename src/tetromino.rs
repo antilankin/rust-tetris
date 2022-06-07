@@ -10,13 +10,6 @@ impl Position {
     pub fn new(x: i32, y: i32) -> Self {
         Position { x, y }
     }
-
-    fn transposed(&self) -> Position {
-        Position {
-            x: self.y,
-            y: self.x,
-        }
-    }
 }
 
 impl ops::Add<Position> for Position {
