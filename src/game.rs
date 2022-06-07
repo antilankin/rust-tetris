@@ -80,7 +80,7 @@ fn spawn(shape: Shape) -> Tetromino {
 fn rotation_candidates(t: Tetromino, direction: Direction) -> Vec<Tetromino> {
     let new_t = match direction {
         Direction::Clockwise => t.get_rotated_clockwise(),
-        Direction::CounterClockwise => t,
+        Direction::CounterClockwise => t.get_rotated_counterclockwise(),
     };
     offsets(t.shape, t.orientation, new_t.orientation)
         .iter()
@@ -178,7 +178,7 @@ mod tests {
             .orientation;
         assert!(game.rotate_counterclockwise());
         println!("{:?}", game.current_tetromino.position);
-        assert!(game.current_tetromino.position == start_position() + [1, 0]);
+        assert!(game.current_tetromino.position == start_position() + [0, -1]);
         assert!(game.current_tetromino.orientation == expected_orientation);
     }
 }
