@@ -34,12 +34,7 @@ impl Game {
     }
 
     fn move_down(&mut self) -> bool {
-        let new_t = self.current_tetromino.get_moved_down();
-        if self.board.can_put(&new_t) {
-            self.current_tetromino = new_t;
-            return true;
-        }
-        false
+        self.update_tetromino(vec![self.current_tetromino.get_moved_down()])
     }
 
     fn rotate_clockwise(&mut self) -> bool {
