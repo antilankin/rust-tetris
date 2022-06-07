@@ -152,12 +152,6 @@ fn rotate_positions_clockwise(coordinates: [Position; 4]) -> [Position; 4] {
     coordinates.map(rotate_position_clockwise)
 }
 
-fn origins_scaled_by_two(shape: Shape) -> Position {
-    match shape {
-        Shape::I => Position::new(1, -1),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
