@@ -103,6 +103,15 @@ fn rotate_clockwise(orientation: Orientation) -> Orientation {
     }
 }
 
+fn rotate_counterclockwise(orientation: Orientation) -> Orientation {
+    match orientation {
+        Orientation::North => Orientation::West,
+        Orientation::East => Orientation::North,
+        Orientation::South => Orientation::East,
+        Orientation::West => Orientation::South,
+    }
+}
+
 impl Tetromino {
     pub fn new(position: Position, shape: Shape) -> Self {
         Self {
@@ -115,6 +124,13 @@ impl Tetromino {
     pub fn get_rotated_clockwise(&self) -> Tetromino {
         Tetromino {
             orientation: rotate_clockwise(self.orientation),
+            ..*self
+        }
+    }
+
+    pub fn get_rotated_counterclockwise(&self) -> Tetromino {
+        Tetromino {
+            orientation: rotate_counterclockwise(self.orientation),
             ..*self
         }
     }
@@ -199,5 +215,21 @@ mod tests {
         assert_eq!(east_tetromino.orientation, Orientation::East);
         assert_eq!(south_tetromino.orientation, Orientation::South);
         assert_eq!(west_tetromino.orientation, Orientation::West);
+        assert_eq!(
+            north_tetromino.get_rotated_counterclockwise().orientation,
+            Orientation::West
+        );
+        assert_eq!(
+            west_tetromino.get_rotated_counterclockwise().orientation,
+            Orientation::South
+        );
+        assert_eq!(
+            south_tetromino.get_rotated_counterclockwise().orientation,
+            Orientation::East
+        );
+        assert_eq!(
+            east_tetromino.get_rotated_counterclockwise().orientation,
+            Orientation::North
+        );
     }
 }

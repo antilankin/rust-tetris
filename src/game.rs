@@ -44,6 +44,13 @@ impl Game {
         ))
     }
 
+    fn rotate_counterclockwise(&mut self) -> bool {
+        self.update_tetromino(rotation_candidates(
+            self.current_tetromino,
+            Direction::CounterClockwise,
+        ))
+    }
+
     fn update_tetromino(&mut self, candidates: Vec<Tetromino>) -> bool {
         if let Some(t) = self.test_candidates(candidates) {
             self.current_tetromino = t;
@@ -156,6 +163,20 @@ mod tests {
         game.spawn();
         let expected_orientation = game.current_tetromino.get_rotated_clockwise().orientation;
         assert!(game.rotate_clockwise());
+        println!("{:?}", game.current_tetromino.position);
+        assert!(game.current_tetromino.position == start_position() + [1, 0]);
+        assert!(game.current_tetromino.orientation == expected_orientation);
+    }
+
+    #[test]
+    fn test_rotate_counterclockwise() {
+        let mut game = Game::new();
+        game.spawn();
+        let expected_orientation = game
+            .current_tetromino
+            .get_rotated_counterclockwise()
+            .orientation;
+        assert!(game.rotate_counterclockwise());
         println!("{:?}", game.current_tetromino.position);
         assert!(game.current_tetromino.position == start_position() + [1, 0]);
         assert!(game.current_tetromino.orientation == expected_orientation);
