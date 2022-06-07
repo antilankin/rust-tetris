@@ -28,10 +28,6 @@ impl Game {
         false
     }
 
-    fn can_move_down(&self) -> bool {
-        self.board.can_put(&self.current_tetromino.move_down())
-    }
-
     fn move_down(&mut self) -> bool {
         let new_t = self.current_tetromino.move_down();
         if self.board.can_put(&new_t) {
@@ -39,11 +35,6 @@ impl Game {
             return true;
         }
         false
-    }
-
-    fn can_rotate_clockwise(&self) -> bool {
-        self.board
-            .can_put(&self.current_tetromino.rotate_clockwise())
     }
 
     fn rotate_clockwise(&mut self) -> bool {
@@ -123,15 +114,10 @@ mod tests {
     }
 
     #[test]
-    fn test_can_move_down() {
+    fn test_put_currrent_tetronimo() {
         let mut game = Game::new();
-        game.spawn();
-        assert!(game.can_move_down());
-
-        let tetromino = Tetromino::new(start_position(), Shape::I);
-        game.board.put(&tetromino.move_down());
-        assert!(game.board.can_put(&tetromino));
-        assert!(!game.can_move_down());
+        assert!(game.put_current_tetromino());
+        assert!(!game.put_current_tetromino());
     }
 
     #[test]
@@ -144,19 +130,11 @@ mod tests {
     }
 
     #[test]
-    fn test_put_currrent_tetronimo() {
+    fn test_rotate_clockwise() {
         let mut game = Game::new();
-        assert!(game.put_current_tetromino());
-        assert!(!game.put_current_tetromino());
-    }
-
-    #[test]
-    fn test_can_rotate_clockwise() {
-        let mut game = Game::new();
-        assert!(game.can_rotate_clockwise());
-
-        let tetromino = Tetromino::new(start_position(), Shape::I);
-        game.board.put(&tetromino.move_down());
-        assert!(!game.can_rotate_clockwise());
+        game.spawn();
+        assert!(game.rotate_clockwise());
+        println!("{:?}", game.current_tetromino.position);
+        assert!(game.current_tetromino.position == start_position() + [1, 0])
     }
 }
