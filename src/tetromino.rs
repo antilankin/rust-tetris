@@ -123,6 +123,13 @@ impl Tetromino {
         Tetromino { position, ..*self }
     }
 
+    pub fn get_offset(&self, offset: [i32; 2]) -> Tetromino {
+        Tetromino {
+            position: self.position + offset,
+            ..*self
+        }
+    }
+
     pub fn move_down(&self) -> Tetromino {
         self.get_moved(down(self.position))
     }

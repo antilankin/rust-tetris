@@ -47,10 +47,15 @@ impl Game {
     }
 
     fn rotate_clockwise(&mut self) -> bool {
-        let new_t = self.current_tetromino.rotate_clockwise();
-        if self.board.can_put(&new_t) {
-            self.current_tetromino = new_t;
-            return true;
+        let cur_t = &self.current_tetromino;
+        let new_t = cur_t.rotate_clockwise();
+
+        for offset in offsets(cur_t.shape, cur_t.orientation, new_t.orientation) {
+            let test_t = new_t.get_offset(offset);
+            if self.board.can_put(&test_t) {
+                self.current_tetromino = test_t;
+                return true;
+            }
         }
         false
     }
@@ -62,6 +67,31 @@ fn start_position() -> Position {
 
 fn spawn(shape: Shape) -> Tetromino {
     Tetromino::new(start_position(), shape)
+}
+
+fn offsets(shape: Shape, from: Orientation, to: Orientation) -> Vec<[i32; 2]> {
+    let from_offsets = offset_table(shape, from);
+    let to_offsets = offset_table(shape, to);
+    from_offsets
+        .iter()
+        .zip(to_offsets.iter())
+        .map(|off| [off.0[0] - off.1[0], off.0[1] - off.1[1]])
+        .collect()
+}
+
+fn offset_table(shape: Shape, orientation: Orientation) -> Vec<[i32; 2]> {
+    match shape {
+        Shape::I => offset_table_i(orientation),
+    }
+}
+
+fn offset_table_i(orientation: Orientation) -> Vec<[i32; 2]> {
+    match orientation {
+        Orientation::North => vec![[0, 0], [-1, 0], [2, 0], [-1, 0], [2, 0]],
+        Orientation::East => vec![[-1, 0], [0, 0], [0, 0], [0, 1], [0, -2]],
+        Orientation::South => vec![[-1, 1], [1, 1], [-2, 1], [1, 0], [-2, 0]],
+        Orientation::West => vec![[0, 1], [0, 1], [0, 1], [0, -1], [0, 2]],
+    }
 }
 
 #[cfg(test)]
