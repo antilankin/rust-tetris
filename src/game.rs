@@ -36,6 +36,14 @@ impl Game {
         self.update_tetromino(vec![self.current_tetromino.get_moved_down()])
     }
 
+    fn move_left(&mut self) -> bool {
+        self.update_tetromino(vec![self.current_tetromino.get_moved_left()])
+    }
+
+    fn move_right(&mut self) -> bool {
+        self.update_tetromino(vec![self.current_tetromino.get_moved_right()])
+    }
+
     fn drop(&mut self) {
         while self.move_down() {}
     }
@@ -169,6 +177,26 @@ mod tests {
         assert!(game.move_down());
         game.put_current_tetromino();
         assert!(!game.move_down());
+    }
+
+    #[test]
+    fn test_move_left() {
+        let mut game = Game::new();
+        game.spawn();
+        assert!(game.move_left());
+        assert!(game.move_left());
+        assert!(game.move_left());
+        assert!(!game.move_left());
+    }
+
+    #[test]
+    fn test_move_right() {
+        let mut game = Game::new();
+        game.spawn();
+        assert!(game.move_right());
+        assert!(game.move_right());
+        assert!(game.move_right());
+        assert!(!game.move_right());
     }
 
     #[test]

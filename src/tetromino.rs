@@ -143,6 +143,14 @@ impl Tetromino {
         self.get_offset([0, -1])
     }
 
+    pub fn get_moved_left(&self) -> Tetromino {
+        self.get_offset([-1, 0])
+    }
+
+    pub fn get_moved_right(&self) -> Tetromino {
+        self.get_offset([1, 0])
+    }
+
     pub fn blocks(&self) -> [Position; 4] {
         tetromino_blocks(self.shape, self.orientation)
     }
