@@ -132,19 +132,16 @@ impl Tetromino {
     }
 }
 
-fn toPosition(values: [[i32; 2]; 4]) -> [Position; 4] {
-    values.map(|[x, y]| Position::new(x, y))
-}
-
 fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
-    toPosition(match shape {
+    match shape {
         Shape::I => match orientation {
             Orientation::North => [[-1, 0], [0, 0], [1, 0], [2, 0]],
             Orientation::East => [[1, 1], [1, 0], [1, -1], [1, -2]],
             Orientation::South => [[2, -1], [1, -1], [0, -1], [-1, -1]],
             Orientation::West => [[0, -2], [0, -1], [0, 0], [0, 1]],
         },
-    })
+    }
+    .map(|[x, y]| Position::new(x, y))
 }
 
 fn rotate_position_clockwise(position: Position) -> Position {
