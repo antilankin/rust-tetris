@@ -43,11 +43,10 @@ impl Game {
     }
 
     fn rotate_clockwise(&mut self) -> bool {
-        self.update_tetromino(self.clockwise_candidates())
-    }
-
-    fn clockwise_candidates(&self) -> Vec<Tetromino> {
-        rotation_candidates(self.current_tetromino, Direction::Clockwise)
+        self.update_tetromino(rotation_candidates(
+            self.current_tetromino,
+            Direction::Clockwise,
+        ))
     }
 
     fn update_tetromino(&mut self, candidates: Vec<Tetromino>) -> bool {
