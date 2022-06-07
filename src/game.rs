@@ -19,9 +19,8 @@ impl Game {
         }
     }
 
-    fn spawn(&mut self) -> bool {
+    fn spawn(&mut self) {
         self.current_tetromino = spawn(Shape::I);
-        self.board.can_put(&self.current_tetromino)
     }
 
     fn put_current_tetromino(&mut self) -> bool {
@@ -151,9 +150,9 @@ mod tests {
     #[test]
     fn test_spawn() {
         let mut game = Game::new();
-        assert!(game.spawn());
-        game.put_current_tetromino();
-        assert!(!game.spawn());
+        game.spawn();
+        assert!(game.current_tetromino.position == start_position());
+        assert!(game.current_tetromino.orientation == Orientation::North);
     }
 
     #[test]
@@ -216,7 +215,7 @@ mod tests {
         assert_eq!(game.current_tetromino.position, start_position());
         game.move_down();
         game.put_current_tetromino();
-        assert!(game.spawn());
+        game.spawn();
         assert!(game.tick());
         assert!(!game.tick());
     }
