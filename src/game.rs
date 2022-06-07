@@ -41,6 +41,17 @@ impl Game {
         while (self.move_down()) {}
     }
 
+    fn tick(&mut self) -> bool {
+        if !self.move_down() {
+            if !self.board.can_put(&self.current_tetromino) {
+                return false;
+            }
+            self.board.put(&self.current_tetromino);
+            self.spawn();
+        }
+        true
+    }
+
     fn rotate_clockwise(&mut self) -> bool {
         self.update_tetromino(rotation_candidates(
             self.current_tetromino,
@@ -192,5 +203,21 @@ mod tests {
         game.spawn();
         game.drop();
         assert_eq!(game.current_tetromino.position, Position::new(4, 0));
+    }
+
+    #[test]
+    fn test_tick() {
+        let mut game = Game::new();
+        game.spawn();
+        assert!(game.tick());
+        assert_eq!(game.current_tetromino.position, down(start_position()));
+        game.drop();
+        assert!(game.tick());
+        assert_eq!(game.current_tetromino.position, start_position());
+        game.move_down();
+        game.put_current_tetromino();
+        assert!(game.spawn());
+        assert!(game.tick());
+        assert!(!game.tick());
     }
 }
