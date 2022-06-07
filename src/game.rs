@@ -37,6 +37,10 @@ impl Game {
         self.update_tetromino(vec![self.current_tetromino.get_moved_down()])
     }
 
+    fn drop(&mut self) {
+        while (self.move_down()) {}
+    }
+
     fn rotate_clockwise(&mut self) -> bool {
         self.update_tetromino(rotation_candidates(
             self.current_tetromino,
@@ -180,5 +184,13 @@ mod tests {
         println!("{:?}", game.current_tetromino.position);
         assert!(game.current_tetromino.position == start_position() + [0, -1]);
         assert!(game.current_tetromino.orientation == expected_orientation);
+    }
+
+    #[test]
+    fn test_drop() {
+        let mut game = Game::new();
+        game.spawn();
+        game.drop();
+        assert_eq!(game.current_tetromino.position, Position::new(4, 0));
     }
 }
