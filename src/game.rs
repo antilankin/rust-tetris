@@ -38,17 +38,33 @@ impl Game {
     }
 
     fn rotate_clockwise(&mut self) -> bool {
+        self.update_tetromino(self.clockwise_candidates())
+    }
+
+    fn clockwise_candidates(&self) -> Vec<Tetromino> {
         let cur_t = &self.current_tetromino;
         let new_t = cur_t.get_rotated_clockwise();
+        offsets(cur_t.shape, cur_t.orientation, new_t.orientation)
+            .iter()
+            .map(|off| new_t.get_offset(*off))
+            .collect()
+    }
 
-        for offset in offsets(cur_t.shape, cur_t.orientation, new_t.orientation) {
-            let test_t = new_t.get_offset(offset);
-            if self.board.can_put(&test_t) {
-                self.current_tetromino = test_t;
-                return true;
-            }
+    fn update_tetromino(&mut self, candidates: Vec<Tetromino>) -> bool {
+        if let Some(t) = self.test_candidates(candidates) {
+            self.current_tetromino = t;
+            return true;
         }
         false
+    }
+
+    fn test_candidates(&self, candidates: Vec<Tetromino>) -> Option<Tetromino> {
+        for candidate in candidates {
+            if self.board.can_put(&candidate) {
+                return Some(candidate);
+            }
+        }
+        None
     }
 }
 
