@@ -122,7 +122,7 @@ mod tests {
         ] {
             assert_eq!(game.current_tetromino.orientation, orientation);
             assert!(game.board.can_put(&game.current_tetromino));
-            game.rotate_clockwise();
+            assert!(game.rotate_clockwise());
         }
     }
 
