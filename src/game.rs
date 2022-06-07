@@ -38,7 +38,7 @@ impl Game {
     }
 
     fn drop(&mut self) {
-        while (self.move_down()) {}
+        while self.move_down() {}
     }
 
     fn tick(&mut self) -> bool {
