@@ -6,6 +6,11 @@ struct Game {
     current_tetromino: Tetromino,
 }
 
+enum Direction {
+    Clockwise,
+    CounterClockwise,
+}
+
 impl Game {
     pub fn new() -> Self {
         Game {
@@ -42,12 +47,7 @@ impl Game {
     }
 
     fn clockwise_candidates(&self) -> Vec<Tetromino> {
-        let cur_t = &self.current_tetromino;
-        let new_t = cur_t.get_rotated_clockwise();
-        offsets(cur_t.shape, cur_t.orientation, new_t.orientation)
-            .iter()
-            .map(|off| new_t.get_offset(*off))
-            .collect()
+        rotation_candidates(self.current_tetromino, Direction::Clockwise)
     }
 
     fn update_tetromino(&mut self, candidates: Vec<Tetromino>) -> bool {
@@ -74,6 +74,17 @@ fn start_position() -> Position {
 
 fn spawn(shape: Shape) -> Tetromino {
     Tetromino::new(start_position(), shape)
+}
+
+fn rotation_candidates(t: Tetromino, direction: Direction) -> Vec<Tetromino> {
+    let new_t = match direction {
+        Direction::Clockwise => t.get_rotated_clockwise(),
+        Direction::CounterClockwise => t,
+    };
+    offsets(t.shape, t.orientation, new_t.orientation)
+        .iter()
+        .map(|off| new_t.get_offset(*off))
+        .collect()
 }
 
 fn offsets(shape: Shape, from: Orientation, to: Orientation) -> Vec<[i32; 2]> {
