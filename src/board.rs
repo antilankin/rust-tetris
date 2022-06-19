@@ -60,6 +60,24 @@ impl Board {
             .map(|p| p + tetromino.position)
             .map(|p| self.set(p, tetromino.shape));
     }
+
+    pub fn remove_full_lines(&mut self) -> usize {
+        let mut read_index: usize = 0;
+        let mut write_index: usize = 0;
+        while read_index < board_height() {
+            while read_index < board_height() && is_line_full(&self.lines[read_index]) {
+                read_index += 1;
+            }
+            self.lines[write_index] = if read_index < board_height() {
+                self.lines[read_index]
+            } else {
+                empty_line()
+            };
+            write_index += 1;
+            read_index += 1;
+        }
+        read_index - write_index
+    }
 }
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -76,6 +94,15 @@ fn empty_line() -> Line {
 fn is_line_full(line: &Line) -> bool {
     for content in line.iter() {
         if content == &BoardContent::Empty {
+            return false;
+        }
+    }
+    true
+}
+
+fn is_line_empty(line: &Line) -> bool {
+    for content in line.iter() {
+        if content != &BoardContent::Empty {
             return false;
         }
     }
@@ -108,6 +135,8 @@ fn board_position(pos: Position) -> Option<BoardPosition> {
 
 #[cfg(test)]
 mod tests {
+    use core::num;
+
     use super::*;
 
     #[test]
@@ -222,5 +251,38 @@ mod tests {
             *content = BoardContent::Tetromino(Shape::I);
         }
         assert!(is_line_full(&board.lines[4]));
+    }
+
+    #[test]
+    fn test_remove_full_lines() {
+        let mut fill_line_partly = |board: &mut Board, line_number: usize| {
+            for j in 0..6 {
+                board.lines[line_number][j] = BoardContent::Tetromino(Shape::I);
+            }
+        };
+
+        let mut fill_line = |board: &mut Board, line_number: usize| {
+            for content in &mut board.lines[line_number] {
+                *content = BoardContent::Tetromino(Shape::I);
+            }
+        };
+
+        let mut board = empty_board();
+        fill_line(&mut board, 0);
+        fill_line_partly(&mut board, 1);
+        fill_line(&mut board, 2);
+        fill_line(&mut board, 3);
+        fill_line_partly(&mut board, 4);
+        fill_line_partly(&mut board, 5);
+        fill_line(&mut board, 6);
+        fill_line_partly(&mut board, 7);
+
+        let num_removed = board.remove_full_lines();
+        assert_eq!(num_removed, 4);
+        for line in &board.lines {
+            assert!(!is_line_full(line));
+        }
+
+        assert!(is_line_empty(&board.lines[4]));
     }
 }
