@@ -258,7 +258,7 @@ mod tests {
         game.spawn_specific(Shape::O);
         drop_left(&mut game);
         assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
-        for _ in (0..4) {
+        for _ in 0..4 {
             game.rotate_clockwise();
         }
         assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
@@ -273,7 +273,6 @@ mod tests {
             .get_rotated_counterclockwise()
             .orientation;
         assert!(game.rotate_counterclockwise());
-        println!("{:?}", game.current_tetromino.position);
         assert_eq!(game.current_tetromino.position, start_position() + [0, -1]);
         assert_eq!(game.current_tetromino.orientation, expected_orientation);
     }
