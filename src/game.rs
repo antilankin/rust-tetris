@@ -256,7 +256,7 @@ mod tests {
     }
 
     #[test]
-    fn test_game() {
+    fn test_play_game_fill_one_line() {
         let mut game = Game::new();
         game.spawn();
         game.move_left();
