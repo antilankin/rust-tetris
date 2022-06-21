@@ -135,8 +135,6 @@ fn board_position(pos: Position) -> Option<BoardPosition> {
 
 #[cfg(test)]
 mod tests {
-    use core::num;
-
     use super::*;
 
     #[test]
@@ -255,19 +253,21 @@ mod tests {
 
     #[test]
     fn test_remove_full_lines() {
-        let mut fill_line_partly = |board: &mut Board, line_number: usize| {
+        let fill_line_partly = |board: &mut Board, line_number: usize| {
             for j in 0..6 {
                 board.lines[line_number][j] = BoardContent::Tetromino(Shape::I);
             }
         };
 
-        let mut fill_line = |board: &mut Board, line_number: usize| {
+        let fill_line = |board: &mut Board, line_number: usize| {
             for content in &mut board.lines[line_number] {
                 *content = BoardContent::Tetromino(Shape::I);
             }
         };
 
         let mut board = empty_board();
+        assert_eq!(board.remove_full_lines(), 0);
+
         fill_line(&mut board, 0);
         fill_line_partly(&mut board, 1);
         fill_line(&mut board, 2);
@@ -282,7 +282,6 @@ mod tests {
         for line in &board.lines {
             assert!(!is_line_full(line));
         }
-
         assert!(is_line_empty(&board.lines[4]));
     }
 }
