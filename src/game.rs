@@ -146,6 +146,22 @@ fn offset_table_i(orientation: Orientation) -> Vec<[i32; 2]> {
 mod tests {
     use super::*;
 
+    fn drop_left(game: &mut Game) -> usize {
+        let mut move_cnt: usize = 0;
+        while game.move_left() {
+            move_cnt += 1;
+        }
+        move_cnt
+    }
+
+    fn drop_right(game: &mut Game) -> usize {
+        let mut move_cnt: usize = 0;
+        while game.move_right() {
+            move_cnt += 1;
+        }
+        move_cnt
+    }
+
     #[test]
     fn test_starting_position() {
         let mut game = Game::new();
@@ -190,20 +206,14 @@ mod tests {
     fn test_move_left() {
         let mut game = Game::new();
         game.spawn();
-        assert!(game.move_left());
-        assert!(game.move_left());
-        assert!(game.move_left());
-        assert!(!game.move_left());
+        assert_eq!(drop_left(&mut game), 3);
     }
 
     #[test]
     fn test_move_right() {
         let mut game = Game::new();
         game.spawn();
-        assert!(game.move_right());
-        assert!(game.move_right());
-        assert!(game.move_right());
-        assert!(!game.move_right());
+        assert_eq!(drop_right(&mut game), 3);
     }
 
     #[test]
@@ -259,14 +269,10 @@ mod tests {
     fn test_play_game_fill_one_line() {
         let mut game = Game::new();
         game.spawn();
-        game.move_left();
-        game.move_left();
-        game.move_left();
+        drop_left(&mut game);
         game.drop();
         game.tick();
-        game.move_right();
-        game.move_right();
-        game.move_right();
+        drop_right(&mut game);
         game.drop();
         game.tick();
         game.rotate_clockwise();
