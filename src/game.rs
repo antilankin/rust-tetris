@@ -222,9 +222,20 @@ mod tests {
         game.spawn();
         let expected_orientation = game.current_tetromino.get_rotated_clockwise().orientation;
         assert!(game.rotate_clockwise());
-        println!("{:?}", game.current_tetromino.position);
-        assert!(game.current_tetromino.position == start_position() + [1, 0]);
-        assert!(game.current_tetromino.orientation == expected_orientation);
+        assert_eq!(game.current_tetromino.position, start_position() + [1, 0]);
+        assert_eq!(game.current_tetromino.orientation, expected_orientation);
+    }
+
+    #[test]
+    fn test_wallkick_i() {
+        let mut game = Game::new();
+        game.spawn();
+        game.rotate_clockwise();
+        drop_left(&mut game);
+        assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
+        game.rotate_counterclockwise();
+        assert_eq!(game.current_tetromino.position, start_position() - [3, 0]);
+        assert_eq!(game.current_tetromino.orientation, Orientation::North);
     }
 
     #[test]
