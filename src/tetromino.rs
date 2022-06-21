@@ -67,6 +67,11 @@ impl ops::Div<i32> for Position {
 pub enum Shape {
     I,
     O,
+    J,
+}
+
+fn all_shapes() -> Vec<Shape> {
+    vec![Shape::I, Shape::O, Shape::J]
 }
 
 #[derive(Copy, Clone)]
@@ -167,6 +172,12 @@ fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
             Orientation::South => [[0, 0], [-1, 0], [-1, -1], [0, -1]],
             Orientation::West => [[0, 0], [0, 1], [-1, 1], [-1, 0]],
         },
+        Shape::J => match orientation {
+            Orientation::North => [[-1, 1], [-1, 0], [0, 0], [1, 0]],
+            Orientation::East => [[1, 1], [0, 1], [0, 0], [0, -1]],
+            Orientation::South => [[1, -1], [1, 0], [0, 0], [-1, 0]],
+            Orientation::West => [[-1, -1], [0, -1], [0, 0], [0, 1]],
+        },
     }
     .map(|[x, y]| Position::new(x, y))
 }
@@ -182,6 +193,30 @@ fn rotate_positions_clockwise(coordinates: [Position; 4]) -> [Position; 4] {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_all_shapes_is_complete() {
+        let mut contains_i = false;
+        let mut contains_j = false;
+        let mut contains_o = false;
+        for shape in all_shapes() {
+            match shape {
+                Shape::I => contains_i = true,
+                Shape::J => contains_j = true,
+                Shape::O => contains_o = true,
+            }
+        }
+        assert!(contains_i);
+        assert!(contains_j);
+        assert!(contains_o);
+    }
+
+    fn test_rotated_blocks(shape: Shape, orientation: Orientation) {
+        assert_eq!(
+            rotate_positions_clockwise(tetromino_blocks(shape, orientation)),
+            tetromino_blocks(shape, rotate_clockwise(orientation)),
+        );
+    }
 
     #[test]
     fn test_rotate_position_clockwise() {
@@ -201,17 +236,15 @@ mod tests {
             Orientation::South,
             Orientation::West,
         ];
-        for orientation in orientations {
-            assert_eq!(
-                rotate_positions_clockwise(tetromino_blocks(Shape::I, orientation)),
-                tetromino_blocks(Shape::I, rotate_clockwise(orientation)),
-            )
+        for shape in all_shapes() {
+            for orientation in orientations {
+                test_rotated_blocks(shape, orientation)
+            }
         }
     }
 
-    #[test]
-    fn test_rotate_tetromino() {
-        let north_tetromino = Tetromino::new(Position::new(0, 0), Shape::I);
+    fn test_rotate_tetromino(shape: Shape) {
+        let north_tetromino = Tetromino::new(Position::new(0, 0), shape);
         let east_tetromino = north_tetromino.get_rotated_clockwise();
         let south_tetromino = east_tetromino.get_rotated_clockwise();
         let west_tetromino = south_tetromino.get_rotated_clockwise();
@@ -235,5 +268,12 @@ mod tests {
             east_tetromino.get_rotated_counterclockwise().orientation,
             Orientation::North
         );
+    }
+
+    #[test]
+    fn test_rotate_tetrominos() {
+        for shape in all_shapes() {
+            test_rotate_tetromino(shape);
+        }
     }
 }

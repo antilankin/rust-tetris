@@ -135,6 +135,7 @@ fn offset_table(shape: Shape, orientation: Orientation) -> Vec<[i32; 2]> {
     match shape {
         Shape::I => offset_table_i(orientation),
         Shape::O => offset_table_o(orientation),
+        Shape::J => offset_table_j(orientation),
     }
 }
 
@@ -144,6 +145,15 @@ fn offset_table_i(orientation: Orientation) -> Vec<[i32; 2]> {
         Orientation::East => vec![[-1, 0], [0, 0], [0, 0], [0, 1], [0, -2]],
         Orientation::South => vec![[-1, 1], [1, 1], [-2, 1], [1, 0], [-2, 0]],
         Orientation::West => vec![[0, 1], [0, 1], [0, 1], [0, -1], [0, 2]],
+    }
+}
+
+fn offset_table_j(orientation: Orientation) -> Vec<[i32; 2]> {
+    match orientation {
+        Orientation::North => vec![[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        Orientation::East => vec![[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]],
+        Orientation::South => vec![[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        Orientation::West => vec![[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]],
     }
 }
 
