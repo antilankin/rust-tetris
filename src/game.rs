@@ -248,8 +248,8 @@ mod tests {
             .orientation;
         assert!(game.rotate_counterclockwise());
         println!("{:?}", game.current_tetromino.position);
-        assert!(game.current_tetromino.position == start_position() + [0, -1]);
-        assert!(game.current_tetromino.orientation == expected_orientation);
+        assert_eq!(game.current_tetromino.position, start_position() + [0, -1]);
+        assert_eq!(game.current_tetromino.orientation, expected_orientation);
     }
 
     #[test]
