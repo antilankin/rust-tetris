@@ -4,6 +4,7 @@ use crate::tetromino::{down, Orientation, Position, Shape, Tetromino};
 struct Game {
     board: Board,
     current_tetromino: Tetromino,
+    lines_removed: usize,
 }
 
 enum Direction {
@@ -16,6 +17,7 @@ impl Game {
         Game {
             board: empty_board(),
             current_tetromino: spawn(Shape::I),
+            lines_removed: 0,
         }
     }
 
@@ -54,6 +56,7 @@ impl Game {
                 return false;
             }
             self.board.put(&self.current_tetromino);
+            self.lines_removed += self.board.remove_full_lines();
             self.spawn();
         }
         true
@@ -88,6 +91,10 @@ impl Game {
             }
         }
         None
+    }
+
+    fn lines_removed(&self) -> usize {
+        self.lines_removed
     }
 }
 
@@ -246,5 +253,28 @@ mod tests {
         game.spawn();
         assert!(game.tick());
         assert!(!game.tick());
+    }
+
+    #[test]
+    fn test_game() {
+        let mut game = Game::new();
+        game.spawn();
+        game.move_left();
+        game.move_left();
+        game.move_left();
+        game.drop();
+        game.tick();
+        game.move_right();
+        game.move_right();
+        game.move_right();
+        game.drop();
+        game.tick();
+        game.rotate_clockwise();
+        game.drop();
+        game.tick();
+        game.rotate_counterclockwise();
+        game.drop();
+        game.tick();
+        assert_eq!(game.lines_removed(), 1);
     }
 }
