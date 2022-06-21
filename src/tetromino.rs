@@ -66,6 +66,7 @@ impl ops::Div<i32> for Position {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Shape {
     I,
+    O,
 }
 
 #[derive(Copy, Clone)]
@@ -159,6 +160,12 @@ fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
             Orientation::East => [[0, 1], [0, 0], [0, -1], [0, -2]],
             Orientation::South => [[1, 0], [0, 0], [-1, 0], [-2, 0]],
             Orientation::West => [[0, -1], [0, 0], [0, 1], [0, 2]],
+        },
+        Shape::O => match orientation {
+            Orientation::North => [[0, 0], [1, 0], [1, 1], [0, 1]],
+            Orientation::East => [[0, 0], [0, -1], [1, -1], [1, 0]],
+            Orientation::South => [[0, 0], [-1, 0], [-1, -1], [0, -1]],
+            Orientation::West => [[0, 0], [0, 1], [-1, 1], [-1, 0]],
         },
     }
     .map(|[x, y]| Position::new(x, y))

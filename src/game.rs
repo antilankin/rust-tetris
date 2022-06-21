@@ -21,8 +21,12 @@ impl Game {
         }
     }
 
+    fn spawn_specific(&mut self, shape: Shape) {
+        self.current_tetromino = spawn(shape);
+    }
+
     fn spawn(&mut self) {
-        self.current_tetromino = spawn(Shape::I);
+        self.spawn_specific(Shape::I);
     }
 
     fn put_current_tetromino(&mut self) -> bool {
@@ -130,6 +134,7 @@ fn offsets(shape: Shape, from: Orientation, to: Orientation) -> Vec<[i32; 2]> {
 fn offset_table(shape: Shape, orientation: Orientation) -> Vec<[i32; 2]> {
     match shape {
         Shape::I => offset_table_i(orientation),
+        Shape::O => offset_table_o(orientation),
     }
 }
 
@@ -139,6 +144,15 @@ fn offset_table_i(orientation: Orientation) -> Vec<[i32; 2]> {
         Orientation::East => vec![[-1, 0], [0, 0], [0, 0], [0, 1], [0, -2]],
         Orientation::South => vec![[-1, 1], [1, 1], [-2, 1], [1, 0], [-2, 0]],
         Orientation::West => vec![[0, 1], [0, 1], [0, 1], [0, -1], [0, 2]],
+    }
+}
+
+fn offset_table_o(orientation: Orientation) -> Vec<[i32; 2]> {
+    match orientation {
+        Orientation::North => vec![[0, 0]],
+        Orientation::East => vec![[0, -1]],
+        Orientation::South => vec![[-1, -1]],
+        Orientation::West => vec![[-1, 0]],
     }
 }
 
@@ -236,6 +250,18 @@ mod tests {
         game.rotate_counterclockwise();
         assert_eq!(game.current_tetromino.position, start_position() - [3, 0]);
         assert_eq!(game.current_tetromino.orientation, Orientation::North);
+    }
+
+    #[test]
+    fn test_wallkick_o() {
+        let mut game = Game::new();
+        game.spawn_specific(Shape::O);
+        drop_left(&mut game);
+        assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
+        for _ in (0..4) {
+            game.rotate_clockwise();
+        }
+        assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
     }
 
     #[test]
