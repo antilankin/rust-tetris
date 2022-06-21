@@ -63,10 +63,6 @@ impl ops::Div<i32> for Position {
     }
 }
 
-pub fn down(position: Position) -> Position {
-    position - [0, 1]
-}
-
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Shape {
     I,

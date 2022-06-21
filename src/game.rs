@@ -1,5 +1,5 @@
 use crate::board::{empty_board, Board};
-use crate::tetromino::{down, Orientation, Position, Shape, Tetromino};
+use crate::tetromino::{Orientation, Position, Shape, Tetromino};
 
 struct Game {
     board: Board,
@@ -244,7 +244,7 @@ mod tests {
         let mut game = Game::new();
         game.spawn();
         assert!(game.tick());
-        assert_eq!(game.current_tetromino.position, down(start_position()));
+        assert_eq!(game.current_tetromino.position, start_position() - [0, 1]);
         game.drop();
         assert!(game.tick());
         assert_eq!(game.current_tetromino.position, start_position());
