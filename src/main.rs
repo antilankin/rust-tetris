@@ -1,5 +1,6 @@
 mod board;
-mod tetromino;
 mod game;
+mod position;
+mod tetromino;
 
 fn main() {}

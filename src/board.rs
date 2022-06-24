@@ -1,4 +1,5 @@
-use crate::tetromino::{Position, Shape, Tetromino};
+use crate::position::Position;
+use crate::tetromino::{Shape, Tetromino};
 
 const fn board_width() -> usize {
     10

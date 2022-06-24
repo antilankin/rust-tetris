@@ -1,5 +1,6 @@
 use crate::board::{empty_board, Board};
-use crate::tetromino::{Orientation, Position, Shape, Tetromino};
+use crate::position::Position;
+use crate::tetromino::{Orientation, Shape, Tetromino};
 
 struct Game {
     board: Board,
