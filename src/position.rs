@@ -57,7 +57,7 @@ impl ops::Div<i32> for Position {
 
     fn div(self, rhs: i32) -> Position {
         if rhs == 0 {
-            panic!();
+            panic!("Division by zero");
         }
         Position::new(self.x / rhs, self.y / rhs)
     }
@@ -104,5 +104,13 @@ mod tests {
         let a = Position::new(12, -10);
         let div = 4;
         assert_eq!(a / div, Position::new(3, -2));
+    }
+
+    #[test]
+    #[should_panic(expected = "Division by zero")]
+    fn test_div_zero() {
+        let a = Position::new(12, -10);
+        let div = 0;
+        let _ = a / div;
     }
 }
