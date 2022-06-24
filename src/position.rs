@@ -70,7 +70,16 @@ mod tests {
     #[test]
     fn test_constructor() {
         let p = Position::new(2, -1);
-        assert_eq! (p.x, 2);
-        assert_eq! (p.y, -1);
+        assert_eq!(p.x, 2);
+        assert_eq!(p.y, -1);
+    }
+
+    #[test]
+    fn test_add() {
+        let a = Position::new(2, -1);
+        let b = Position::new(-7, 3);
+        let sum = Position::new(a.x + b.x, a.y + b.y);
+        assert_eq!(a + b, sum);
+        assert_eq!(a + [-7, 3], sum);
     }
 }
