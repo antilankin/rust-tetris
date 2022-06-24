@@ -2,6 +2,7 @@ use crate::tetromino::Shape;
 
 struct RandomBag {
     contents: [Shape; 14],
+    index: usize,
 }
 
 impl RandomBag {
@@ -23,11 +24,18 @@ impl RandomBag {
                 Shape::T,
                 Shape::Z,
             ],
+            index: 0,
         }
     }
 
-    fn peek(self) -> Shape {
-        self.contents[0]
+    fn peek(&self) -> Shape {
+        self.contents[self.index]
+    }
+
+    fn get(&mut self) -> Shape {
+        let result = self.contents[self.index];
+        self.index = (self.index + 1) % self.contents.len();
+        result
     }
 }
 
@@ -36,8 +44,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_bag() {
-        let bag = RandomBag::default();
-        assert_eq!(bag.peek(), Shape::I);
+    fn test_get() {
+        let mut bag = RandomBag::default();
+        for _ in 1..=3 {
+            assert_eq!(bag.peek(), Shape::I);
+            assert_eq!(bag.get(), Shape::I);
+            assert_eq!(bag.peek(), Shape::J);
+            assert_eq!(bag.get(), Shape::J);
+            assert_eq!(bag.peek(), Shape::L);
+            assert_eq!(bag.get(), Shape::L);
+            assert_eq!(bag.peek(), Shape::O);
+            assert_eq!(bag.get(), Shape::O);
+            assert_eq!(bag.peek(), Shape::S);
+            assert_eq!(bag.get(), Shape::S);
+            assert_eq!(bag.peek(), Shape::T);
+            assert_eq!(bag.get(), Shape::T);
+            assert_eq!(bag.peek(), Shape::Z);
+            assert_eq!(bag.get(), Shape::Z);
+        }
     }
 }
