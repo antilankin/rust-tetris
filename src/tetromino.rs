@@ -69,10 +69,11 @@ pub enum Shape {
     O,
     J,
     L,
+    S,
 }
 
 fn all_shapes() -> Vec<Shape> {
-    vec![Shape::I, Shape::O, Shape::J, Shape::L]
+    vec![Shape::I, Shape::O, Shape::J, Shape::L, Shape::S]
 }
 
 #[derive(Copy, Clone)]
@@ -185,6 +186,12 @@ fn tetromino_blocks(shape: Shape, orientation: Orientation) -> [Position; 4] {
             Orientation::South => [[-1, -1], [1, 0], [0, 0], [-1, 0]],
             Orientation::West => [[-1, 1], [0, -1], [0, 0], [0, 1]],
         },
+        Shape::S => match orientation {
+            Orientation::North => [[1, 1], [-1, 0], [0, 0], [0, 1]],
+            Orientation::East => [[1, -1], [0, 1], [0, 0], [1, 0]],
+            Orientation::South => [[-1, -1], [1, 0], [0, 0], [0, -1]],
+            Orientation::West => [[-1, 1], [0, -1], [0, 0], [-1, 0]],
+        },
     }
     .map(|[x, y]| Position::new(x, y))
 }
@@ -207,18 +214,21 @@ mod tests {
         let mut contains_j = false;
         let mut contains_l = false;
         let mut contains_o = false;
+        let mut contains_s = false;
         for shape in all_shapes() {
             match shape {
                 Shape::I => contains_i = true,
                 Shape::J => contains_j = true,
                 Shape::L => contains_l = true,
                 Shape::O => contains_o = true,
+                Shape::S => contains_s = true,
             }
         }
         assert!(contains_i);
         assert!(contains_j);
         assert!(contains_o);
         assert!(contains_l);
+        assert!(contains_s);
     }
 
     fn test_rotated_blocks(shape: Shape, orientation: Orientation) {
