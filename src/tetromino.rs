@@ -11,7 +11,7 @@ pub enum Shape {
     Z,
 }
 
-fn all_shapes() -> Vec<Shape> {
+pub fn all_shapes() -> Vec<Shape> {
     vec![
         Shape::I,
         Shape::O,

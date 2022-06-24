@@ -1,4 +1,4 @@
-use crate::tetromino::Shape;
+use crate::tetromino::{all_shapes, Shape};
 
 struct RandomBag {
     contents: [Shape; 14],
@@ -44,23 +44,31 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get() {
+    fn test_peek_get() {
         let mut bag = RandomBag::default();
-        for _ in 1..=3 {
-            assert_eq!(bag.peek(), Shape::I);
-            assert_eq!(bag.get(), Shape::I);
-            assert_eq!(bag.peek(), Shape::J);
-            assert_eq!(bag.get(), Shape::J);
-            assert_eq!(bag.peek(), Shape::L);
-            assert_eq!(bag.get(), Shape::L);
-            assert_eq!(bag.peek(), Shape::O);
-            assert_eq!(bag.get(), Shape::O);
-            assert_eq!(bag.peek(), Shape::S);
-            assert_eq!(bag.get(), Shape::S);
-            assert_eq!(bag.peek(), Shape::T);
-            assert_eq!(bag.get(), Shape::T);
-            assert_eq!(bag.peek(), Shape::Z);
-            assert_eq!(bag.get(), Shape::Z);
+        for _ in 1..=140 {
+            assert_eq!(bag.peek(), bag.get());
+        }
+    }
+
+    #[test]
+    fn test_count() {
+        let mut bag = RandomBag::default();
+        for shape in all_shapes() {
+            assert_eq!(
+                bag.contents[0..7]
+                    .iter()
+                    .filter(|bag_shape| **bag_shape == shape)
+                    .count(),
+                1
+            );
+            assert_eq!(
+                bag.contents[7..14]
+                    .iter()
+                    .filter(|bag_shape| **bag_shape == shape)
+                    .count(),
+                1
+            );
         }
     }
 }
