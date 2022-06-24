@@ -82,4 +82,13 @@ mod tests {
         assert_eq!(a + b, sum);
         assert_eq!(a + [-7, 3], sum);
     }
+
+    #[test]
+    fn test_sub() {
+        let a = Position::new(2, -1);
+        let b = Position::new(-7, 3);
+        let diff = Position::new(a.x - b.x, a.y - b.y);
+        assert_eq!(a - b, diff);
+        assert_eq!(a - [-7, 3], diff);
+    }
 }
