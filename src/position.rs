@@ -91,4 +91,12 @@ mod tests {
         assert_eq!(a - b, diff);
         assert_eq!(a - [-7, 3], diff);
     }
+
+    #[test]
+    fn test_mul() {
+        let a = Position::new(2, -1);
+        let scale = 4;
+        let scaled = Position::new(a.x * scale, a.y * scale);
+        assert_eq!(a * scale, scaled);
+    }
 }
