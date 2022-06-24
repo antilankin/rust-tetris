@@ -1,10 +1,12 @@
 use crate::board::{empty_board, Board};
 use crate::position::Position;
+use crate::randombag::RandomBag;
 use crate::tetromino::{Orientation, Shape, Tetromino};
 
 struct Game {
     board: Board,
     current_tetromino: Tetromino,
+    random_bag: RandomBag,
     lines_removed: usize,
 }
 
@@ -18,6 +20,7 @@ impl Game {
         Game {
             board: empty_board(),
             current_tetromino: spawn(Shape::I),
+            random_bag: RandomBag::new(),
             lines_removed: 0,
         }
     }
