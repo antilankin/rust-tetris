@@ -1,13 +1,20 @@
 use crate::tetromino::{all_shapes, Shape};
+use rand::prelude::SliceRandom;
+use rand::thread_rng;
+use rand::Rng;
 
-struct RandomBag {
+struct RandomBag<R>
+where
+    R: Rng,
+{
     contents: [Shape; 14],
     index: usize,
+    rng: R,
 }
 
-impl RandomBag {
-    fn default() -> RandomBag {
-        RandomBag {
+impl<R: Rng> RandomBag<R> {
+    fn new(rng: R) -> Self {
+        let mut bag = RandomBag {
             contents: [
                 Shape::I,
                 Shape::J,
@@ -25,7 +32,11 @@ impl RandomBag {
                 Shape::Z,
             ],
             index: 0,
-        }
+            rng: rng,
+        };
+        bag.shuffle_front();
+        bag.shuffle_back();
+        bag
     }
 
     fn peek(&self) -> Shape {
@@ -35,7 +46,20 @@ impl RandomBag {
     fn get(&mut self) -> Shape {
         let result = self.contents[self.index];
         self.index = (self.index + 1) % self.contents.len();
+        match self.index {
+            0 => self.shuffle_back(),
+            7 => self.shuffle_front(),
+            _ => (),
+        }
         result
+    }
+
+    fn shuffle_front(&mut self) {
+        self.contents[0..7].shuffle(&mut self.rng);
+    }
+
+    fn shuffle_back(&mut self) {
+        self.contents[7..14].shuffle(&mut self.rng);
     }
 }
 
@@ -45,7 +69,7 @@ mod tests {
 
     #[test]
     fn test_peek_get() {
-        let mut bag = RandomBag::default();
+        let mut bag = RandomBag::new(thread_rng());
         for _ in 1..=140 {
             assert_eq!(bag.peek(), bag.get());
         }
@@ -53,7 +77,7 @@ mod tests {
 
     #[test]
     fn test_count() {
-        let bag = RandomBag::default();
+        let bag = RandomBag::new(thread_rng());
         let count_shapes_in_slice = |begin: usize, end: usize, shape: &Shape| {
             bag.contents[begin..end]
                 .iter()
