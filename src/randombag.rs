@@ -2,7 +2,6 @@ use crate::tetromino::{all_shapes, Shape};
 use rand::prelude::SliceRandom;
 use rand::rngs::ThreadRng;
 use rand::thread_rng;
-use rand::Rng;
 
 pub struct RandomBag {
     contents: [Shape; 14],
@@ -41,7 +40,7 @@ impl RandomBag {
         self.contents[self.index]
     }
 
-    fn get(&mut self) -> Shape {
+    pub fn get(&mut self) -> Shape {
         let result = self.contents[self.index];
         self.index = (self.index + 1) % self.contents.len();
         match self.index {

@@ -30,7 +30,8 @@ impl Game {
     }
 
     fn spawn(&mut self) {
-        self.spawn_specific(Shape::I);
+        let shape = self.random_bag.get();
+        self.spawn_specific(shape);
     }
 
     fn put_current_tetromino(&mut self) -> bool {
@@ -224,7 +225,7 @@ mod tests {
     #[test]
     fn test_move_down() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         assert!(game.move_down());
         game.put_current_tetromino();
         assert!(!game.move_down());
@@ -233,21 +234,21 @@ mod tests {
     #[test]
     fn test_move_left() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         assert_eq!(drop_left(&mut game), 3);
     }
 
     #[test]
     fn test_move_right() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         assert_eq!(drop_right(&mut game), 3);
     }
 
     #[test]
     fn test_rotate_clockwise() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         let expected_orientation = game.current_tetromino.get_rotated_clockwise().orientation;
         assert!(game.rotate_clockwise());
         assert_eq!(game.current_tetromino.position, start_position() + [1, 0]);
@@ -257,7 +258,7 @@ mod tests {
     #[test]
     fn test_wallkick_i() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         game.rotate_clockwise();
         drop_left(&mut game);
         assert_eq!(game.current_tetromino.position, start_position() - [4, 0]);
@@ -281,7 +282,7 @@ mod tests {
     #[test]
     fn test_rotate_counterclockwise() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         let expected_orientation = game
             .current_tetromino
             .get_rotated_counterclockwise()
@@ -294,7 +295,7 @@ mod tests {
     #[test]
     fn test_drop() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         game.drop();
         assert_eq!(game.current_tetromino.position, Position::new(4, 0));
     }
@@ -307,6 +308,7 @@ mod tests {
         assert_eq!(game.current_tetromino.position, start_position() - [0, 1]);
         game.drop();
         assert!(game.tick());
+        game.spawn_specific(Shape::I);
         assert_eq!(game.current_tetromino.position, start_position());
         game.move_down();
         game.put_current_tetromino();
@@ -318,16 +320,19 @@ mod tests {
     #[test]
     fn test_play_game_fill_one_line() {
         let mut game = Game::new();
-        game.spawn();
+        game.spawn_specific(Shape::I);
         drop_left(&mut game);
         game.drop();
         game.tick();
+        game.spawn_specific(Shape::I);
         drop_right(&mut game);
         game.drop();
         game.tick();
+        game.spawn_specific(Shape::I);
         game.rotate_clockwise();
         game.drop();
         game.tick();
+        game.spawn_specific(Shape::I);
         game.rotate_counterclockwise();
         game.drop();
         game.tick();
