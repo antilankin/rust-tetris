@@ -53,22 +53,16 @@ mod tests {
 
     #[test]
     fn test_count() {
-        let mut bag = RandomBag::default();
+        let bag = RandomBag::default();
+        let count_shapes_in_slice = |begin: usize, end: usize, shape: &Shape| {
+            bag.contents[begin..end]
+                .iter()
+                .filter(|bag_shape| *bag_shape == shape)
+                .count()
+        };
         for shape in all_shapes() {
-            assert_eq!(
-                bag.contents[0..7]
-                    .iter()
-                    .filter(|bag_shape| **bag_shape == shape)
-                    .count(),
-                1
-            );
-            assert_eq!(
-                bag.contents[7..14]
-                    .iter()
-                    .filter(|bag_shape| **bag_shape == shape)
-                    .count(),
-                1
-            );
+            assert_eq!(count_shapes_in_slice(0, 7, &shape), 1);
+            assert_eq!(count_shapes_in_slice(7, 14, &shape), 1);
         }
     }
 }
