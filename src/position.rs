@@ -66,4 +66,11 @@ impl ops::Div<i32> for Position {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_constructor() {
+        let p = Position::new(2, -1);
+        assert_eq! (p.x, 2);
+        assert_eq! (p.y, -1);
+    }
 }
